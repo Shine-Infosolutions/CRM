@@ -5,17 +5,21 @@ import { CheckCircle } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
 import { Printer } from "lucide-react";
 import { RxCrossCircled } from "react-icons/rx";
+import { toast, Toaster } from "react-hot-toast";
 
 const IternaryField = () => {
   const { id } = useParams();
   const [itinerary, setItinerary] = useState(null);
   const componentRef = useRef();
+  const [hotelsWithImages, setHotelsWithImages] = useState([]);
+  const [destinationImages, setDestinationImages] = useState([]);
+  const [images, setImages] = useState([]);
 
   useEffect(() => {
     const fetchItinerary = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/Iternary/mano/682b17cc3585325892b61383`
+          `http://localhost:5000/Iternary/mano/682c2f3ca98e563ebeb3ef01`
         );
         setItinerary(res.data.data);
       } catch (err) {
@@ -25,8 +29,102 @@ const IternaryField = () => {
 
     fetchItinerary();
   }, [id]);
+  useEffect(() => {
+    const fetchHotelImages = async () => {
+      if (
+        !itinerary ||
+        !itinerary.hotelSelected ||
+        itinerary.hotelSelected.length === 0
+      ) {
+        setHotelsWithImages([]);
+        return;
+      }
+      const hotels = await Promise.all(
+        itinerary.hotelSelected.map(async (hotel) => {
+          const hotelId =
+            typeof hotel === "string" ? hotel : hotel._id || hotel.value;
+          let hotelName =
+            typeof hotel === "string"
+              ? hotel
+              : hotel.name || hotel.label || hotelId;
 
-  // 👇 MOVE THIS HOOK ABOVE ANY RETURN STATEMENT
+          try {
+            const res = await axios.get(
+              `http://localhost:5000/gals/all?hotelId=${hotelId}`
+            );
+            return {
+              hotelName,
+              images: res.data,
+            };
+          } catch (err) {
+            return {
+              hotelName,
+              images: [],
+            };
+          }
+        })
+      );
+      setHotelsWithImages(hotels);
+    };
+
+    fetchHotelImages();
+  }, [itinerary]);
+  useEffect(() => {
+    const fetchDestinationImages = async () => {
+      if (
+        !itinerary ||
+        !itinerary.destinations ||
+        itinerary.destinations.length === 0
+      ) {
+        setDestinationImages([]);
+        return;
+      }
+      const desti = await Promise.all(
+        itinerary.destinations.map(async (destination) => {
+          const destId =
+            typeof destination === "string"
+              ? destination
+              : destination._id || destination.value;
+          let destName =
+            typeof destination === "string"
+              ? destination
+              : destination.name || destination.label || destId;
+          try {
+            const res = await axios.get(
+              `http://localhost:5000/dest/alls?destId=${destId}`
+            );
+            return {
+              destName,
+              images: res.data,
+            };
+          } catch (error) {
+            return {
+              destName,
+              images: [],
+            };
+          }
+        })
+      );
+      setDestinationImages(desti);
+    };
+    fetchDestinationImages();
+  }, [itinerary]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/common/all");
+        setImages(res.data);
+      } catch (err) {}
+    };
+
+    fetchImages();
+
+    const interval = setInterval(fetchImages, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     documentTitle: itinerary?.title || "Itinerary",
@@ -55,12 +153,20 @@ const IternaryField = () => {
           Print Itinerary
         </button>
       </div>
-      <div className="min-h-screen text-gray-800 p-6 md:p-12 flex items-start">
+      <div
+        ref={componentRef}
+        className="min-h-screen text-gray-800 p-6 md:p-12 flex items-start"
+      >
+        <Toaster />
         <div className="flex justify-end mb-6"></div>
-        <div
-          ref={componentRef}
-          className="bg-white rounded-lg shadow-lg p-6 md:p-10 space-y-6"
-        >
+        <div className="bg-white rounded-lg shadow-lg p-6 md:p-10 space-y-6">
+          <div className="flex justify-center">
+            <img
+              src="/src/assets/Logo.png"
+              alt="Logo"
+              className="w-40 h-28 object-contain"
+            />
+          </div>
           <div className="w-full mb-4">
             <img
               className="rounded-lg w-full h-[290px] object-cover shadow"
@@ -70,21 +176,21 @@ const IternaryField = () => {
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <div class=" rounded-md ">
+            <div className=" rounded-md ">
               <img
                 className="rounded-lg w-full h-[150px] object-cover shadow"
                 src="src/assets/71840.jpg"
                 alt="Main"
               />
             </div>
-            <div class=" rounded-md ">
+            <div className=" rounded-md ">
               <img
                 className="rounded-lg w-full h-[150px] object-cover shadow"
                 src="src/assets/71840.jpg"
                 alt="Main"
               />
             </div>
-            <div class=" rounded-md ">
+            <div className=" rounded-md ">
               <img
                 className="rounded-lg w-full h-[150px] object-cover shadow"
                 src="src/assets/71840.jpg"
@@ -93,18 +199,7 @@ const IternaryField = () => {
             </div>
           </div>
           {/* Logo */}
-          <div className="flex justify-center">
-            <img
-              src="/src/assets/Logo.png"
-              alt="Logo"
-              className="w-40 h-28 object-contain"
-            />
-          </div>
-          {/* Title */}
-          {/* <h1 className="text-center text-2xl md:text-3xl font-bold underline">
-            {itinerary.title || "Nepal Tour 2024"}
-          </h1> */}
-          {/* Company Info */}
+
           <div className="bg-gray-100 p-4 rounded-md">
             <h2 className="text-xl font-semibold mb-2 text-red-600">
               Shine Travels
@@ -209,46 +304,24 @@ const IternaryField = () => {
 
           <div>
             <h3 className="text-lg font-semibold mb-1 underline">
-              Destinations
-            </h3>
-            <ul className="list-disc list-inside text-sm md:text-base text-gray-700">
-              {(itinerary.destinations || []).length > 0 ? (
-                itinerary.destinations.map((place, i) => (
-                  <li key={i}>{place}</li>
-                ))
-              ) : (
-                <li>N/A</li>
-              )}
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-1 underline">Hotels</h3>
-            <ul className="list-disc list-inside text-sm md:text-base text-gray-700">
-              {(itinerary.hotelSelected || []).length > 0 ? (
-                itinerary.hotelSelected.map((place, i) => (
-                  <li key={i}>{place}</li>
-                ))
-              ) : (
-                <li>N/A</li>
-              )}
-            </ul>
-          </div>
-          {/* Day-wise Schedule */}
-          <div>
-            <h3 className="text-lg font-semibold mb-1 underline">
               Day-wise Itinerary
             </h3>
-
             {(itinerary.dynamicFields || []).length > 0 ? (
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {itinerary.dynamicFields.map((day, i) => (
-                  <div key={i}>
-                    <h4 className="font-semibold text-base text-blue-700 mb-1">
+                  <div
+                    key={i}
+                    className="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col"
+                  >
+                    <h4 className="font-semibold text-lg text-blue-700 mb-2">
                       {day.dayTitle || `Day ${i + 1}`}
                     </h4>
-                    <ul className="list-disc list-inside text-sm md:text-base text-gray-700 space-y-1">
+                    <ul className="list-disc list-inside text-sm md:text-base text-gray-700 space-y-2">
                       {(day.points || []).map((point, idx) => (
-                        <li key={idx}>{point}</li>
+                        <li key={idx} className="flex items-start gap-2">
+                          <CheckCircle className="text-green-500 w-5 h-5 mt-1" />
+                          <span>{point}</span>
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -321,6 +394,103 @@ const IternaryField = () => {
                 </ul>
               </div>
             </div>
+          </div>
+          <h3 className="text-lg font-semibold mb-1 underline">Destinations</h3>
+          {destinationImages.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {destinationImages.map((destination, i) => (
+                <div key={i} className="p-3">
+                  <div className="grid grid-cols-3 w-[850px] gap-2 ml-[-10px]">
+                    {destination.images.slice(0, 3).map((img, idx) => (
+                      <img
+                        key={img._id || idx}
+                        src={img.url}
+                        alt={destination.destName}
+                        className="h-[200px] w-full object-cover rounded mb-2"
+                      />
+                    ))}
+                    {destination.images.length === 0 && (
+                      <span className="text-gray-400 text-sm col-span-3">
+                        No Images
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">No images available.</p>
+          )}
+          <h3 className="text-lg font-semibold mb-1 underline">Hotels</h3>
+          {hotelsWithImages.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {hotelsWithImages.map((hotel, i) => (
+                <div key={i} className="p-4">
+                  <div className="grid grid-cols-4 w-[800px] gap-2">
+                    {hotel.images.slice(0, 8).map((img, idx) => (
+                      <img
+                        key={img._id || idx}
+                        src={img.url}
+                        alt={hotel.hotelName}
+                        className="h-[100px] w-full object-cover rounded mb-2"
+                      />
+                    ))}
+                    {hotel.images.length === 0 && (
+                      <span className="text-gray-400 text-sm col-span-2">
+                        No images
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">No hotel images available.</p>
+          )}
+          <div className="items-center flex flex-col mt-8">
+            <div className="">
+              <img
+                src="src/assets/Qr.png"
+                alt="Payment QR"
+                className=" object-contain mb-2"
+              />
+              <div className="text-center">
+                <p className="font-semibold text-gray-700">Scan to Pay</p>
+                <p className="text-sm text-gray-500">
+                  UPI:{" "}
+                  <span className="font-mono">saini.yashpal505-1@okicici</span>
+                </p>
+                <p className="text-sm text-gray-500">
+                  Phone: <span className="font-mono">9140427414</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 className="underline text-black text-center text-[30px] font-serif font-semibold">
+              Our Guest Summary
+            </h3>
+            {images.length > 0 ? (
+              <div
+                className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3 mt-4"
+                style={{ width: "100%" }}
+              >
+                {images.map((img, idx) => (
+                  <div key={img._id || idx} className="break-inside-avoid mb-3">
+                    <img
+                      src={img.url}
+                      alt={img.name || `Guest ${idx + 1}`}
+                      className="w-full rounded shadow object-cover mb-1"
+                      style={{ display: "block" }}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500 text-center">
+                No guest images available.
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -54,7 +54,7 @@ const Images = () => {
     }
 
     const uniqueFiles = files.filter(
-      (file) => !allDuplicates.includes(file.name) && file.size / 1024 <= 500
+      (file) => !allDuplicates.includes(file.name)
     );
 
     if (uniqueFiles.length > 0) {
