@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // hook to navigate to another page
-import { ToastContainer, toast } from "react-toastify"; // for toast notifications
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast, Toaster } from "react-hot-toast";
 
-const CustomerForm = ({ customer, setCustomer }) => {
-  const navigate = useNavigate(); // hook to navigate to another page
+const CustomerForm = () => {
+  const { id } = useParams(); // Get the id from URL
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -13,35 +14,58 @@ const CustomerForm = ({ customer, setCustomer }) => {
     WhatsApp: "",
   });
 
+  useEffect(() => {
+    if (id) {
+      // Fetch existing customer data to edit
+      axios
+        .get(`http://localhost:5000/customer/mono/${id}`)
+        .then((res) => {
+          const { name, phone, email, Address, WhatsApp } = res.data.data;
+          setFormData({
+            name: name || "",
+            phone: phone || "",
+            email: email || "",
+            Address: Address || "",
+            WhatsApp: WhatsApp || "",
+          });
+        })
+        .catch((err) => {
+          toast.error("Failed to load customer data");
+          console.error(err);
+        });
+    }
+  }, [id]);
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      // POST to backend
-      await axios.post("http://localhost:5000/customer/add", formData);
-      toast.success("Detail submitted successfully!");
-      setCustomer((prev) => [...prev, formData]);
-      setTimeout(() => {
-        navigate("/CustomerList");
-      }, 2000);
-      setFormData({
-        name: "",
-        phone: "",
-        email: "",
-        Address: "",
-        WhatsApp: "",
-      });
-    } catch (err) {
-      toast.error("Failed to submit details!");
+      if (id) {
+        // Update
+        await axios.put(
+          `http://localhost:5000/customer/update/${id}`,
+          formData
+        );
+        toast.success("Customer updated successfully");
+      } else {
+        // Add new
+        await axios.post("http://localhost:5000/customer/add", formData);
+        toast.success("Customer added successfully");
+      }
+
+      navigate("/CustomerList"); // or wherever your list is
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.error(error);
     }
   };
   return (
     <div className="mx-full  p-6 rounded-2xl shadow-xl border border-gray-200 bg-white h-[100vh]">
-      <ToastContainer position="top-right" reverseOrder={false} />
+      <Toaster position="top-right" reverseOrder={false} />
       <h2 className="text-4xl font-bold mb-6 text-center text-blue-700 tracking-wide">
         Add New Customer
       </h2>
@@ -124,17 +148,16 @@ const CustomerForm = ({ customer, setCustomer }) => {
           {/* Submit */}
           <div className="text-center">
             <button
-              onClick={handleSubmit}
               disabled={
                 !formData.name ||
                 !formData.phone ||
                 !formData.Address ||
                 !formData.email
-              } //Adding new condition for email
+              }
               type="submit"
               className="px-10 py-3 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-xl transition-all duration-200"
             >
-              Submit Detail
+              {id ? "Update" : "Submit"} Detail
             </button>
           </div>
         </form>

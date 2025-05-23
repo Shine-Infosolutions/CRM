@@ -28,7 +28,7 @@ function App() {
   const navigate = useNavigate();
   const [leads, setLeads] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [customer, setCustomer] = useState([]);
+  // const [customer, setCustomer] = useState([]);
 
   useEffect(() => {
     const userLoggedIn = localStorage.getItem("loggedin");
@@ -64,16 +64,17 @@ function App() {
               <Route
                 path="leadsform"
                 element={<LeadsForm setLeads={setLeads} />}
-                />
-                <Route path="CustomerList" element={<CustomerList customer={customer}/>}/>
-              <Route path="CustomerForm" element={<CustomerForm setCustomer={setCustomer}/>}/>
+              />
+              <Route path="CustomerList" element={<CustomerList />} />
+              <Route path="CustomerForm" element={<CustomerForm />} />
+              <Route path="CustomerForm/:id" element={<CustomerForm />} />
               <Route path="InvoiceNewList" element={<InvoiceNewList />} />
               <Route path="InvoiceNewForm/:id" element={<InvoiceNewForm />} />
               <Route path="InvoiceNewForm" element={<InvoiceNewForm />} />
-              <Route path="InvoiceNewPrint/:id" element={<InvoiceNewPrint/> }/>
-              <Route path="IternaryList" element={<IternaryList/>}/>
-              <Route path="IternaryField/:id" element={<IternaryField/>}/>
-              <Route path="IternaryField/" element={<IternaryField/>}/>
+              <Route path="InvoiceNewPrint/:id" element={<InvoiceNewPrint />} />
+              <Route path="IternaryList" element={<IternaryList />} />
+              <Route path="IternaryField/:id" element={<IternaryField />} />
+              <Route path="IternaryField/" element={<IternaryField />} />
             </Routes>
           </div>
         </div>
