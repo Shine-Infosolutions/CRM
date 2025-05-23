@@ -1,7 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
-const CustomerList = ({ customer }) => {
+const CustomerList = ({c}) => {
+  const [customer, setCustomer] = useState([]);
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  const fetchCustomers = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/customer/all");
+      setCustomer(res.data.data); 
+    } catch (error) {
+      toast.error("Failed to Fetch customer");
+      console.error(error);
+    }
+  };
+
   return (
     <div className="p-6">
       {/* Top bar */}
@@ -16,7 +34,7 @@ const CustomerList = ({ customer }) => {
         </Link>
       </div>
 
-      {/* customer Table */}
+      {/* Customer Table */}
       {customer.length === 0 ? (
         <p className="text-center text-gray-500 mt-10">No details available.</p>
       ) : (
@@ -51,31 +69,12 @@ const CustomerList = ({ customer }) => {
                   <td className="px-6 py-4">{customer.email}</td>
                   <td className="px-6 py-4">{customer.Address}</td>
                   <td className="flex px-6 py-4 gap-2">
-                    <button className="px-3 py-3 mx-2 my-0.5 btn-x-s bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-all duration-200">
+                    <button className="px-3 py-3 mx-2 my-0.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-all duration-200">
                       UPDATE
                     </button>
-                    <button className="px-3 py-3  mx-2 my-0.5 btn-x-s bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all duration-200">
+                    <button className="px-3 py-3 mx-2 my-0.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all duration-200">
                       DELETE
                     </button>
-                  {/* <td className="px-6 py-4">{customer.enquiry}</td>
-                  <td className="px-6 py-4">
-                    {customer.followUpDate
-                      ? new Date(customer.followUpDate).toLocaleDateString()
-                      : "—"}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`text-xs px-3 py-1 rounded-full font-semibold ${
-                        customer.status === "true"
-                          ? "bg-purple-700 text-white"
-                          : "bg-gray-200 text-gray-700"
-                      }`}
-                    >
-                      {customer.status === "true"
-                        ? "In Progress"
-                        : "Not Interested"}
-                    </span>
-                  </td> */}
                   </td>
                 </tr>
               ))}

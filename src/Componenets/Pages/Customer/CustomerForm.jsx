@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // hook to navigate to another page
 import { ToastContainer, toast } from "react-toastify"; // for toast notifications
+import axios from "axios";
 
 const CustomerForm = ({ customer, setCustomer }) => {
   const navigate = useNavigate(); // hook to navigate to another page
@@ -12,32 +13,32 @@ const CustomerForm = ({ customer, setCustomer }) => {
     WhatsApp: "",
   });
 
-
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setCustomer((prev) => [...prev, formData]); // update state
-    toast.success("Detail submitted successfully!"); // show toast
-
-    setTimeout(() => {
-      navigate("/CustomerList"); // navigate after delay
-    }, 2000); // wait 2 seconds
-
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-      Address: "",
-      WhatsApp: "",
-    });
-
+    try {
+      // POST to backend
+      await axios.post("http://localhost:5000/customer/add", formData);
+      toast.success("Detail submitted successfully!");
+      setCustomer((prev) => [...prev, formData]);
+      setTimeout(() => {
+        navigate("/CustomerList");
+      }, 2000);
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        Address: "",
+        WhatsApp: "",
+      });
+    } catch (err) {
+      toast.error("Failed to submit details!");
+    }
   };
-
   return (
     <div className="mx-full  p-6 rounded-2xl shadow-xl border border-gray-200 bg-white h-[100vh]">
       <ToastContainer position="top-right" reverseOrder={false} />

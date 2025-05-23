@@ -3,47 +3,49 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
-import { Printer } from "lucide-react";
 import { RxCrossCircled } from "react-icons/rx";
-import { toast, Toaster } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
+import generatePDF from "react-to-pdf";
 
 const IternaryField = () => {
   const { id } = useParams();
   const [itinerary, setItinerary] = useState(null);
-  const componentRef = useRef();
   const [hotelsWithImages, setHotelsWithImages] = useState([]);
   const [destinationImages, setDestinationImages] = useState([]);
   const [images, setImages] = useState([]);
+  const targetRef = useRef();
 
   useEffect(() => {
     const fetchItinerary = async () => {
       try {
+        // Using the dynamic id param instead of hardcoded (if needed)
         const res = await axios.get(
-          `http://localhost:5000/Iternary/mano/682c2f3ca98e563ebeb3ef01`
+          `http://localhost:5000/Iternary/mano/${
+            id || "682c2f3ca98e563ebeb3ef01"
+          }`
         );
         setItinerary(res.data.data);
       } catch (err) {
         console.error("Error fetching itinerary", err);
+        toast.error("Failed to load itinerary.");
       }
     };
 
     fetchItinerary();
   }, [id]);
+
   useEffect(() => {
     const fetchHotelImages = async () => {
-      if (
-        !itinerary ||
-        !itinerary.hotelSelected ||
-        itinerary.hotelSelected.length === 0
-      ) {
+      if (!itinerary?.hotelSelected?.length) {
         setHotelsWithImages([]);
         return;
       }
+
       const hotels = await Promise.all(
         itinerary.hotelSelected.map(async (hotel) => {
           const hotelId =
             typeof hotel === "string" ? hotel : hotel._id || hotel.value;
-          let hotelName =
+          const hotelName =
             typeof hotel === "string"
               ? hotel
               : hotel.name || hotel.label || hotelId;
@@ -52,61 +54,51 @@ const IternaryField = () => {
             const res = await axios.get(
               `http://localhost:5000/gals/all?hotelId=${hotelId}`
             );
-            return {
-              hotelName,
-              images: res.data,
-            };
-          } catch (err) {
-            return {
-              hotelName,
-              images: [],
-            };
+            return { hotelName, images: res.data };
+          } catch {
+            return { hotelName, images: [] };
           }
         })
       );
+
       setHotelsWithImages(hotels);
     };
 
     fetchHotelImages();
   }, [itinerary]);
+
   useEffect(() => {
     const fetchDestinationImages = async () => {
-      if (
-        !itinerary ||
-        !itinerary.destinations ||
-        itinerary.destinations.length === 0
-      ) {
+      if (!itinerary?.destinations?.length) {
         setDestinationImages([]);
         return;
       }
+
       const desti = await Promise.all(
         itinerary.destinations.map(async (destination) => {
           const destId =
             typeof destination === "string"
               ? destination
               : destination._id || destination.value;
-          let destName =
+          const destName =
             typeof destination === "string"
               ? destination
               : destination.name || destination.label || destId;
+
           try {
             const res = await axios.get(
               `http://localhost:5000/dest/alls?destId=${destId}`
             );
-            return {
-              destName,
-              images: res.data,
-            };
-          } catch (error) {
-            return {
-              destName,
-              images: [],
-            };
+            return { destName, images: res.data };
+          } catch {
+            return { destName, images: [] };
           }
         })
       );
+
       setDestinationImages(desti);
     };
+
     fetchDestinationImages();
   }, [itinerary]);
 
@@ -115,18 +107,19 @@ const IternaryField = () => {
       try {
         const res = await axios.get("http://localhost:5000/common/all");
         setImages(res.data);
-      } catch (err) {}
+      } catch {
+        // Optional: show toast or silently fail
+      }
     };
 
     fetchImages();
 
     const interval = setInterval(fetchImages, 2000);
-
     return () => clearInterval(interval);
   }, []);
 
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
+    content: () => targetRef.current,
     documentTitle: itinerary?.title || "Itinerary",
     removeAfterPrint: true,
   });
@@ -139,22 +132,17 @@ const IternaryField = () => {
 
   const days = Number(itinerary.days);
   const nights = isNaN(days) ? "N/A" : days + 1;
-
   return (
     <>
       <div>
         <button
-          onClick={handlePrint}
-          className="flex items-center gap-2 bg-indigo-600 
-          ml-[850px] mb-[-20px]
-          hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          onClick={() => generatePDF(targetRef, { filename: "page.pdf" })}
         >
-          <Printer className="w-5 h-5" />
-          Print Itinerary
+          Download PDF
         </button>
       </div>
       <div
-        ref={componentRef}
+        ref={targetRef}
         className="min-h-screen text-gray-800 p-6 md:p-12 flex items-start"
       >
         <Toaster />
