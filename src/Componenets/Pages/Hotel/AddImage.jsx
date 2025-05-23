@@ -22,7 +22,7 @@ const AddImage = () => {
 
   const fetchHotels = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/hotels");
+      const res = await axios.get("https://billing-backend-seven.vercel.app//hotels");
       setHotels(res.data);
     } catch (err) {
       toast.error("❌ Failed to fetch hotels.");
@@ -33,7 +33,7 @@ const AddImage = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `http://localhost:5000/gals/all?hotelId=${seltOption}`
+        `https://billing-backend-seven.vercel.app//gals/all?hotelId=${seltOption}`
       );
       setImagesByHotel((prev) => ({
         ...prev,
@@ -80,7 +80,7 @@ const AddImage = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/gals/upload-images",
+        "https://billing-backend-seven.vercel.app//gals/upload-images",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -104,7 +104,7 @@ const AddImage = () => {
     if (!confirm) return;
 
     try {
-      await axios.delete(`http://localhost:5000/gals/delete/${id}`);
+      await axios.delete(`https://billing-backend-seven.vercel.app//gals/delete/${id}`);
       toast.success("🗑️ Image deleted successfully.");
       fetchImages(); // refresh list
     } catch (error) {

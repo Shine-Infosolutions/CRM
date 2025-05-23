@@ -13,7 +13,7 @@ const CustomerList = () => {
 
   const fetchCustomers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/customer/all");
+      const res = await axios.get("https://billing-backend-seven.vercel.app//customer/all");
       setCustomer(res.data.data);
     } catch (error) {
       toast.error("Failed to fetch customers");
@@ -24,7 +24,7 @@ const CustomerList = () => {
   const deleteCustomer = async (id) => {
     try {
       const res = await axios.delete(
-        `http://localhost:5000/customer/delete/${id}`
+        `https://billing-backend-seven.vercel.app//customer/delete/${id}`
       );
       if (res.status === 200) {
         toast.success("Customer deleted");

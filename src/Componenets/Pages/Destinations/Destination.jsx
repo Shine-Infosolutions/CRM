@@ -23,7 +23,7 @@ const Destination = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/adds", {
+      const res = await axios.post("https://billing-backend-seven.vercel.app//adds", {
         name: name.trim(),
       });
 
@@ -43,7 +43,7 @@ const Destination = () => {
   // Fetch Destination from backend
   const fetchDestination = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/destinations");
+      const res = await axios.get("https://billing-backend-seven.vercel.app//destinations");
       setDestination(res.data); // adjust if your data shape is different
     } catch (err) {
       toast.error("Failed to fetch destination");
@@ -52,7 +52,7 @@ const Destination = () => {
   const deleteDestination = async (id) => {
     try {
       const res = await axios.delete(
-        `http://localhost:5000/destinations/${id}`
+        `https://billing-backend-seven.vercel.app//destinations/${id}`
       );
       if (res.status === 200) {
         toast.success("Destination deleted successfully!");
