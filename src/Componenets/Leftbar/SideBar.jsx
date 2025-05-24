@@ -78,27 +78,21 @@ const Sidebar = () => {
         />
         <SidebarDropdown
           title="Products"
-          icon={<Squares2X2Icon className="w-5 h-5 ml-[-6px]" />}
+          icon={<Squares2X2Icon className="w-5 h-5" />}
           isOpen={openProducts}
-          setIsOpen={(val) => {
-            setOpenProducts(val);
-            if (collapsed) setCollapsed(false);
-            if (mobileOpen) setMobileOpen(false);
-          }}
+          setIsOpen={setOpenProducts}
           items={[{ title: "Add Product", link: "/Products" }]}
           selected={selected}
           setSelected={handleItemClick}
           collapsed={collapsed}
+          setMobileOpen={setMobileOpen} // ✅ pass this
         />
+
         <SidebarDropdown
           title="Gallery"
-          icon={<CameraIcon className="w-5 h-5 ml-[-6px]" />}
-          isOpen={openGallery}
-          setIsOpen={(val) => {
-            setOpenGallery(val);
-            if (collapsed) setCollapsed(false);
-            if (mobileOpen) setMobileOpen(false);
-          }}
+          icon={<CameraIcon className="w-5 h-5" />}
+          isOpen={openGallery} // ✅ Fix: use `openGallery` instead of `openProducts`
+          setIsOpen={setOpenGallery}
           items={[
             { title: "Common", link: "/Common" },
             { title: "Hotel", link: "/Hotel" },
@@ -107,7 +101,9 @@ const Sidebar = () => {
           selected={selected}
           setSelected={handleItemClick}
           collapsed={collapsed}
+          setMobileOpen={setMobileOpen} // ✅ pass this
         />
+
         <SidebarItem
           title="Invoice"
           icon={<UserCircleIcon className="w-5 h-5" />}
@@ -206,8 +202,10 @@ const SidebarDropdown = ({
   selected,
   setSelected,
   collapsed,
+  setMobileOpen, // ✅ receive it
 }) => (
   <div>
+    {/* Toggle dropdown */}
     <div
       onClick={() => setIsOpen(!isOpen)}
       className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors duration-200 ${
@@ -229,13 +227,19 @@ const SidebarDropdown = ({
         />
       )}
     </div>
+
+    {/* Dropdown items */}
     {!collapsed && isOpen && (
       <div className="ml-6 mt-1 flex flex-col gap-1 text-gray-600 text-sm animate-fade-in">
         {items.map((item, idx) => (
           <Link
             to={item.link}
             key={idx}
-            onClick={() => setSelected(item.title)}
+            onClick={() => {
+              setSelected(item.title);
+              setIsOpen(false); // optional: close dropdown
+              if (setMobileOpen) setMobileOpen(false); // ✅ close mobile sidebar
+            }}
             className={`pl-2 py-1 rounded-md transition-colors ${
               selected === item.title
                 ? "bg-blue-100 text-blue-600"
