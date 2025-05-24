@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Pencil, Trash2 } from "lucide-react"; // Icons for buttons
 
 export default function Product() {
+  const formRef = useRef(null);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -18,10 +19,27 @@ export default function Product() {
     productStock: "",
   });
 
+  const startEditingProduct = (product) => {
+    setEditingId(product._id);
+    setFormData({
+      productName: product.productName,
+      productPrice: product.productPrice,
+      productUnit: product.productUnit,
+      productDiscount: product.productDiscount,
+      productStock: product.productStock,
+    });
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    toast.info("Editing product...");
+  };
+
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.get("https://billing-backend-seven.vercel.app/billing/all");
+      const res = await axios.get(
+        "https://billing-backend-seven.vercel.app/billing/all"
+      );
       setProducts(res.data.data);
     } catch (error) {
       toast.error("No more product list");
@@ -45,7 +63,10 @@ export default function Product() {
         );
         toast.success("Product updated successfully");
       } else {
-        await axios.post("https://billing-backend-seven.vercel.app/billing/create", formData);
+        await axios.post(
+          "https://billing-backend-seven.vercel.app/billing/create",
+          formData
+        );
         toast.success("Product created successfully");
       }
       setFormData({
@@ -66,23 +87,14 @@ export default function Product() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://billing-backend-seven.vercel.app/billing/delete/${id}`);
+      await axios.delete(
+        `https://billing-backend-seven.vercel.app/billing/delete/${id}`
+      );
       toast.success("Product deleted successfully");
       fetchProducts();
     } catch (error) {
       toast.error("Failed to delete product");
     }
-  };
-
-  const startEditingProduct = (product) => {
-    setEditingId(product._id);
-    setFormData({
-      productName: product.productName,
-      productPrice: product.productPrice,
-      productUnit: product.productUnit,
-      productDiscount: product.productDiscount,
-      productStock: product.productStock,
-    });
   };
 
   return (
@@ -96,6 +108,7 @@ export default function Product() {
         </h2>
 
         <form
+          ref={formRef}
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >

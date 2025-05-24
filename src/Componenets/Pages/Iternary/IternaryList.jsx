@@ -23,7 +23,7 @@ const IternaryList = ({ leads, setLeads }) => {
     cost: "",
     personNo: "",
     hotelType: "",
-    advance:"",
+    advance: "",
     dynamicFields: Array().fill({ fieldName: "" }), // Array to store dynamic fields
     hotelSelected: [],
     destinations: [],
@@ -54,15 +54,17 @@ const IternaryList = ({ leads, setLeads }) => {
     { dayTitle: "", points: [""] },
   ]);
 
-  const [maxDays, setMaxDays] = useState(); // Maximum number of days
+  const [maxDays, setMaxDays] = useState(4); // Maximum number of days
   const [activeDay, setActiveDay] = useState(1); // Currently selected day
   const [daySchedules, setDaySchedules] = useState(
-    Array.from({ length: 4}, () => [])
+    Array.from({ length: 4 }, () => [])
   );
   useEffect(() => {
     const fetchHotels = async () => {
       try {
-        const res = await axios.get("https://billing-backend-seven.vercel.app/hotels"); // 🔁 update this URL based on your API
+        const res = await axios.get(
+          "https://billing-backend-seven.vercel.app/hotels"
+        ); // 🔁 update this URL based on your API
         const hotelOptions = res.data.map((hotel) => ({
           id: hotel._id,
           label: hotel.name,
@@ -81,7 +83,9 @@ const IternaryList = ({ leads, setLeads }) => {
   useEffect(() => {
     const fetchDestinations = async () => {
       try {
-        const res = await axios.get("https://billing-backend-seven.vercel.app/destinations"); // 🔁 update this URL based on your API
+        const res = await axios.get(
+          "https://billing-backend-seven.vercel.app/destinations"
+        ); // 🔁 update this URL based on your API
         const destinationOptions = res.data.map((destination) => ({
           id: destination._id,
           label: destination.name,
@@ -174,11 +178,12 @@ const IternaryList = ({ leads, setLeads }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const dynamicFields = daySchedules.map((schedule, index) => ({
-      dayTitle: `Day ${index + 1}`,
-      points: schedule,
-    }))
-    .filter(day => Array.isArray(day.points) && day.points.length > 0);
+    const dynamicFields = daySchedules
+      .map((schedule, index) => ({
+        dayTitle: `Day ${index + 1}`,
+        points: schedule,
+      }))
+      .filter((day) => Array.isArray(day.points) && day.points.length > 0);
 
     const finalData = {
       ...formData,
@@ -228,23 +233,34 @@ const IternaryList = ({ leads, setLeads }) => {
   };
 
   return (
-    <div className="p-4  mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <Link
-          to="/IternaryField"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow"
-        >
-          + Create Invoice
-        </Link>
-      </div>
-      <div className="mx-auto max-w-6xl p-6 rounded-2xl shadow-xl border border-gray-200 bg-white h-[100vh]">
+    <div className="p-4 mx-auto max-w-7xl">
+      <div className="rounded-2xl shadow-2xl border border-gray-200  h-[100vh] overflow-hidden">
         <ToastContainer position="top-right" reverseOrder={false} />
-        <h2 className="text-4xl font-bold mb-6 text-center text-blue-700 tracking-wide">
-          Add New Tour
-        </h2>
-        <hr className="mb-6 border-gray-300" />
 
-        <div className="overflow-y-auto h-[75vh] pr-3">
+        <div
+          className="overflow-y-auto h-full p-4 sm:p-6 lg:p-8"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          <style>
+            {`
+          .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+              `}
+          </style>
+          <div className="hide-scrollbar flex justify-end mb-4">
+            <Link
+              to="/IternaryField"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-lg text-lg"
+            >
+              Print Itieranary
+            </Link>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6 mt-[-50px] text-center text-blue-700 tracking-wide">
+            Add New Tour
+          </h2>
+          <hr className="mb-6 border-gray-300" />
+
           <form className="space-y-8 text-gray-700">
             {/* Name & Primary Number */}
             <div className="grid md:grid-cols-2 gap-6">
@@ -413,7 +429,7 @@ const IternaryList = ({ leads, setLeads }) => {
               </div>
             </div>
             <div>
-                  <div>
+              <div>
                 <label className="block mb-2 font-semibold">
                   Number of days
                 </label>
@@ -518,96 +534,96 @@ const IternaryList = ({ leads, setLeads }) => {
                 ))}
               </ul>
             </div>
-                    <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Cost Includes</h3>
-          <div className="flex space-x-2">
-            <input
-              type="text"
-              id="cost-include-input"
-              placeholder="Add cost include item"
-              className="flex-1 p-3 border border-gray-300 rounded-lg"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && e.target.value.trim() !== "") {
-                  addCostInclude(e.target.value.trim());
-                  e.target.value = "";
-                }
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => {
-                const input = document.getElementById("cost-include-input");
-                if (input && input.value.trim() !== "") {
-                  addCostInclude(input.value.trim());
-                  input.value = "";
-                }
-              }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-            >
-              Add
-            </button>
-          </div>
-          <ul className="list-disc pl-5 space-y-1">
-            {costInclude.map((item, idx) => (
-              <li key={idx} className="flex justify-between items-center">
-                <span>{item}</span>
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Cost Includes</h3>
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  id="cost-include-input"
+                  placeholder="Add cost include item"
+                  className="flex-1 p-3 border border-gray-300 rounded-lg"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && e.target.value.trim() !== "") {
+                      addCostInclude(e.target.value.trim());
+                      e.target.value = "";
+                    }
+                  }}
+                />
                 <button
                   type="button"
-                  onClick={() => removeCostInclude(idx)}
-                  className="text-red-500 text-sm"
+                  onClick={() => {
+                    const input = document.getElementById("cost-include-input");
+                    if (input && input.value.trim() !== "") {
+                      addCostInclude(input.value.trim());
+                      input.value = "";
+                    }
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg"
                 >
-                  Remove
+                  Add
                 </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+              </div>
+              <ul className="list-disc pl-5 space-y-1">
+                {costInclude.map((item, idx) => (
+                  <li key={idx} className="flex justify-between items-center">
+                    <span>{item}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeCostInclude(idx)}
+                      className="text-red-500 text-sm"
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-        {/* Cost Exclude Section */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Cost Excludes</h3>
-          <div className="flex space-x-2">
-            <input
-              type="text"
-              id="cost-exclude-input"
-              placeholder="Add cost exclude item"
-              className="flex-1 p-3 border border-gray-300 rounded-lg"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && e.target.value.trim() !== "") {
-                  addCostExclude(e.target.value.trim());
-                  e.target.value = "";
-                }
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => {
-                const input = document.getElementById("cost-exclude-input");
-                if (input && input.value.trim() !== "") {
-                  addCostExclude(input.value.trim());
-                  input.value = "";
-                }
-              }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-            >
-              Add
-            </button>
-          </div>
-          <ul className="list-disc pl-5 space-y-1">
-            {costExclude.map((item, idx) => (
-              <li key={idx} className="flex justify-between items-center">
-                <span>{item}</span>
+            {/* Cost Exclude Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Cost Excludes</h3>
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  id="cost-exclude-input"
+                  placeholder="Add cost exclude item"
+                  className="flex-1 p-3 border border-gray-300 rounded-lg"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && e.target.value.trim() !== "") {
+                      addCostExclude(e.target.value.trim());
+                      e.target.value = "";
+                    }
+                  }}
+                />
                 <button
                   type="button"
-                  onClick={() => removeCostExclude(idx)}
-                  className="text-red-500 text-sm"
+                  onClick={() => {
+                    const input = document.getElementById("cost-exclude-input");
+                    if (input && input.value.trim() !== "") {
+                      addCostExclude(input.value.trim());
+                      input.value = "";
+                    }
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg"
                 >
-                  Remove
+                  Add
                 </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+              </div>
+              <ul className="list-disc pl-5 space-y-1">
+                {costExclude.map((item, idx) => (
+                  <li key={idx} className="flex justify-between items-center">
+                    <span>{item}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeCostExclude(idx)}
+                      className="text-red-500 text-sm"
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             {/* hotel dropdown  */}
             <div className="hotelMenu">
