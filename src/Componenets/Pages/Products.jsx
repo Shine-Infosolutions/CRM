@@ -110,77 +110,129 @@ export default function Product() {
         <form
           ref={formRef}
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-4 sm:gap-x-6"
         >
-          <input
-            type="text"
-            name="productName"
-            value={formData.productName}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, productName: e.target.value }))
-            }
-            placeholder="Product Name"
-            className="input border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500"
-            required
-          />
-          <input
-            type="number"
-            name="productPrice"
-            value={formData.productPrice}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, productPrice: e.target.value }))
-            }
-            placeholder="Amount (₹)"
-            className="input border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500"
-          />
-          <input
-            type="number"
-            name="productDiscount"
-            value={formData.productDiscount}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                productDiscount: e.target.value,
-              }))
-            }
-            placeholder="Discount %"
-            className="input border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500"
-          />
-          <select
-            name="productUnit"
-            value={formData.productUnit}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, productUnit: e.target.value }))
-            }
-            className="input border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500"
-          >
-            <option value="">Select Unit</option>
-            <option value="pcs">Pieces</option>
-            <option value="kg">Kilograms</option>
-            <option value="liters">Liters</option>
-            <option value="pack">Pack</option>
-            <option value="dozen">Dozen</option>
-          </select>
-          <input
-            type="number"
-            name="productStock"
-            value={formData.productStock}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, productStock: e.target.value }))
-            }
-            placeholder="Stock Quantity"
-            className="input border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500"
-          />
-          <div className="flex justify-end md:col-span-2">
+          <div className="flex flex-col">
+            <label
+              className="mb-1 font-semibold text-gray-700"
+              htmlFor="productName"
+            >
+              Product Name
+            </label>
+            <input
+              id="productName"
+              type="text"
+              name="productName"
+              value={formData.productName}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  productName: e.target.value,
+                }))
+              }
+              placeholder="Product Name"
+              className="border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500 transition"
+              required
+            />
+          </div>
+          <div className="flex flex-col">
+            <label
+              className="mb-1 font-semibold text-gray-700"
+              htmlFor="productPrice"
+            >
+              Amount (₹)
+            </label>
+            <input
+              id="productPrice"
+              type="number"
+              name="productPrice"
+              value={formData.productPrice}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  productPrice: e.target.value,
+                }))
+              }
+              placeholder="Amount (₹)"
+              className="border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500 transition"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label
+              className="mb-1 font-semibold text-gray-700"
+              htmlFor="productDiscount"
+            >
+              Discount %
+            </label>
+            <input
+              id="productDiscount"
+              type="number"
+              name="productDiscount"
+              value={formData.productDiscount}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  productDiscount: e.target.value,
+                }))
+              }
+              placeholder="Discount %"
+              className="border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500 transition"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label
+              className="mb-1 font-semibold text-gray-700"
+              htmlFor="productUnit"
+            >
+              Unit
+            </label>
+            <select
+              id="productUnit"
+              name="productUnit"
+              value={formData.productUnit}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  productUnit: e.target.value,
+                }))
+              }
+              className="border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500 transition bg-white"
+            >
+              <option value="">Select Unit</option>
+              <option value="pcs">Pieces</option>
+              <option value="kg">Kilograms</option>
+              <option value="liters">Liters</option>
+              <option value="pack">Pack</option>
+              <option value="dozen">Dozen</option>
+            </select>
+          </div>
+          <div className="flex flex-col md:col-span-2">
+            <label
+              className="mb-1 font-semibold text-gray-700"
+              htmlFor="productStock"
+            >
+              Stock Quantity
+            </label>
+            <input
+              id="productStock"
+              type="number"
+              name="productStock"
+              value={formData.productStock}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  productStock: e.target.value,
+                }))
+              }
+              placeholder="Stock Quantity"
+              className="border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500 transition"
+            />
+          </div>
+          <div className="md:col-span-2 flex flex-col sm:flex-row justify-end gap-3 mt-2">
             <button
               type="submit"
               disabled={loading}
-              className="inline-block px-4 py-3 
-              text-sm font-semibold text-center 
-                text-white uppercase transition duration-200 
-                 ease-in-out bg-indigo-600 
-                 rounded-md cursor-pointer 
-                 hover:bg-indigo-700"
+              className="w-full sm:w-auto px-6 py-3 text-sm font-semibold text-center text-white uppercase transition duration-200 ease-in-out bg-indigo-600 rounded-md cursor-pointer hover:bg-indigo-700"
             >
               {loading
                 ? editingId
@@ -190,6 +242,24 @@ export default function Product() {
                 ? "Update Product"
                 : "Add Product"}
             </button>
+            {editingId && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingId(null);
+                  setFormData({
+                    productName: "",
+                    productPrice: "",
+                    productUnit: "",
+                    productDiscount: "",
+                    productStock: "",
+                  });
+                }}
+                className="w-full sm:w-auto px-6 py-3 text-sm font-semibold text-center text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 transition"
+              >
+                Cancel
+              </button>
+            )}
           </div>
         </form>
       </div>
