@@ -233,8 +233,8 @@ const IternaryList = ({ leads, setLeads }) => {
   };
 
   return (
-    <div className="p-4 mx-auto max-w-7xl">
-      <div className="rounded-2xl shadow-2xl border border-gray-200  h-[100vh] overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-4 px-1 flex justify-center">
+      <div className="w-full max-w-2xl">
         <ToastContainer position="top-right" reverseOrder={false} />
 
         <div
@@ -249,17 +249,22 @@ const IternaryList = ({ leads, setLeads }) => {
               `}
           </style>
           <div className="hide-scrollbar flex justify-end mb-4">
-            <Link
+            {/* <Link
               to="/IternaryField"
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-lg text-lg"
             >
               Print Itieranary
-            </Link>
+            </Link> */}
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6 mt-[-50px] text-center text-blue-700 tracking-wide">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-blue-700 tracking-wide w-full sm:w-auto">
             Add New Tour
           </h2>
-          <hr className="mb-6 border-gray-300" />
+          <Link to="/IternaryField" className="w-full sm:w-auto">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-4 py-2 rounded-lg shadow-lg text-base font-semibold transition">
+              Print Itinerary
+            </button>
+          </Link>
+          <hr className="mb-4 border-gray-300" />
 
           <form className="space-y-8 text-gray-700">
             {/* Name & Primary Number */}

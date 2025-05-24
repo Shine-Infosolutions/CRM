@@ -38,10 +38,10 @@ const InvoiceNewPrint = () => {
       .split(" ")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
-const handlePrint = useReactToPrint({
-  content: () =>componentRef.current,
-  documentTitle: 'Laundry Invoice',
- pageStyle: `
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: "Laundry Invoice",
+    pageStyle: `
 @page {
   size: A4;
   margin: 5mm;
@@ -99,16 +99,14 @@ const handlePrint = useReactToPrint({
     text-align: center;
   }
 }
-`
-
-});
-
+`,
+  });
 
   if (loading) return <div>Loading invoice...</div>;
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="bg-white p-10 text-sm">
+    <div className="bg-white p-2 sm:p-10 text-xs sm:text-sm">
       {/* Print Button */}
       <div className="mb-4 text-right">
         <button
@@ -121,7 +119,7 @@ const handlePrint = useReactToPrint({
 
       {/* Printable Content */}
       <div ref={componentRef}>
-        <div className="border-4 border-black max-w-5xl mx-auto">
+        <div className="border-2 border-black max-w-full sm:max-w-5xl mx-auto">
           <div className="flex justify-between items-center py-2 relative border-2 border-black border-l-0 border-r-0 border-t-0 p-4">
             <h1 className="text-xm text-blue-600 font-bold text-center w-full">
               T A X I N V O I C E
@@ -132,15 +130,17 @@ const handlePrint = useReactToPrint({
           </div>
 
           {/* Top Info Grid */}
-          <div className="grid grid-cols-2 border-r-0 border-b-2 border-black">
-            <div className="flex items-start gap-1 mb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 border-b-2 border-black">
+            <div className="flex flex-col sm:flex-row items-start gap-1 mb-2">
               <img
                 src="/logo/Shine_logo.png"
                 alt="Logo"
-                className="w-[30%] h-[7rem] object-contain"
+                className="w-24 h-20 object-contain mb-2 sm:mb-0"
               />
               <div>
-                <p className="text-lg font-bold">SHINE INFOSOLUTIONS</p>
+                <p className="text-base sm:text-lg font-bold">
+                  SHINE INFOSOLUTIONS
+                </p>
                 <p className="text-xs">
                   GSTIN: <span className="font-bold">09FTJPS4577P1ZD</span>
                 </p>
@@ -157,7 +157,7 @@ const handlePrint = useReactToPrint({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 border border-t-0 border-b-0 border-r-0 border-black text-sm font-semibold text-black">
+            <div className="grid grid-cols-2 border border-t-0 border-b-0 border-r-0 border-black text-xs sm:text-sm font-semibold text-black">
               <div className="border border-t-0 border-black p-2">
                 <p>Invoice #:</p>
                 <p className="font-bold">{invoice.invoiceNumber}</p>
@@ -191,51 +191,54 @@ const handlePrint = useReactToPrint({
           </div>
 
           {/* Items Table */}
-          <table className="table-auto border-2 border-black w-full text-md border-r-0 border-l-0">
-            <thead>
-              <tr>
-                <th className="border border-black px-2 py-1">#</th>
-                <th className="border border-black px-2 py-1">Item</th>
-                <th className="border border-black px-2 py-1">HSN/ SAC</th>
-                <th className="border border-black px-2 py-1">Rate / Item</th>
-                <th className="border border-black px-2 py-1">Qty</th>
-                <th className="border border-black px-2 py-1">Taxable Value</th>
-                <th className="border border-black px-2 py-1">Tax Amount</th>
-                <th className="border border-black px-2 py-1">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoice?.productDetails?.map((product, index) => (
-                <tr key={index}>
-                  <td className="border border-black px-2 py-1 text-center">
-                    {index + 1}
-                  </td>
-                  <td className="border border-black px-2 py-1">
-                    {product.item}
-                  </td>
-                  <td className="border border-black px-2 py-1">
-                    {product.hsn}
-                  </td>
-                  <td className="border border-black px-2 py-1">
-                    ₹{product.rate}
-                  </td>
-                  <td className="border border-black px-2 py-1">
-                    {product.qty}
-                  </td>
-                  <td className="border border-black px-2 py-1">
-                    ₹{product.taxableValue}
-                  </td>
-                  <td className="border border-black px-2 py-1">
-                    ₹{product.taxAmount}
-                  </td>
-                  <td className="border border-black px-2 py-1">
-                    ₹{product.amount}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-[600px] table-auto border-2 border-black w-full text-xs sm:text-md border-r-0 border-l-0">
+              <thead>
+                <tr>
+                  <th className="border border-black px-2 py-1">#</th>
+                  <th className="border border-black px-2 py-1">Item</th>
+                  <th className="border border-black px-2 py-1">HSN/ SAC</th>
+                  <th className="border border-black px-2 py-1">Rate / Item</th>
+                  <th className="border border-black px-2 py-1">Qty</th>
+                  <th className="border border-black px-2 py-1">
+                    Taxable Value
+                  </th>
+                  <th className="border border-black px-2 py-1">Tax Amount</th>
+                  <th className="border border-black px-2 py-1">Amount</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-
+              </thead>
+              <tbody>
+                {invoice?.productDetails?.map((product, index) => (
+                  <tr key={index}>
+                    <td className="border border-black px-2 py-1 text-center">
+                      {index + 1}
+                    </td>
+                    <td className="border border-black px-2 py-1">
+                      {product.item}
+                    </td>
+                    <td className="border border-black px-2 py-1">
+                      {product.hsn}
+                    </td>
+                    <td className="border border-black px-2 py-1">
+                      ₹{product.rate}
+                    </td>
+                    <td className="border border-black px-2 py-1">
+                      {product.qty}
+                    </td>
+                    <td className="border border-black px-2 py-1">
+                      ₹{product.taxableValue}
+                    </td>
+                    <td className="border border-black px-2 py-1">
+                      ₹{product.taxAmount}
+                    </td>
+                    <td className="border border-black px-2 py-1">
+                      ₹{product.amount}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           <div className="p-2 text-xs font-bold">
             <p>
               Total Items / Qty: {invoice.productDetails.length} /{" "}
