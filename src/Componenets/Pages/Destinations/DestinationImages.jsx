@@ -21,7 +21,7 @@ const DestinationImages = () => {
   }, [seltOption]);
   const fetchDestination = async () => {
     try {
-      const res = await fetch("https://billing-backend-seven.vercel.app//destinations");
+      const res = await fetch("https://billing-backend-seven.vercel.app/destinations");
       const data = await res.json(); // <-- parse JSON here
       setDestinations(data);
     } catch (err) {
@@ -34,7 +34,7 @@ const DestinationImages = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `https://billing-backend-seven.vercel.app//dest/alls?destId=${seltOption}`
+        `https://billing-backend-seven.vercel.app/dest/alls?destId=${seltOption}`
       );
       setImageByDest((prev) => ({
         ...prev,
@@ -83,7 +83,7 @@ const DestinationImages = () => {
 
     try {
       const res = await axios.post(
-        "https://billing-backend-seven.vercel.app//dest/upload-img",
+        "https://billing-backend-seven.vercel.app/dest/upload-img",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -109,7 +109,7 @@ const DestinationImages = () => {
     if (!confirm) return;
 
     try {
-      await axios.delete(`https://billing-backend-seven.vercel.app//dest/del/${id}`);
+      await axios.delete(`https://billing-backend-seven.vercel.app/dest/del/${id}`);
       toast.success("🗑️ Image deleted successfully.");
       fetchImages(); // refresh list
     } catch (error) {

@@ -10,7 +10,7 @@ const Images = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const res = await axios.get("https://billing-backend-seven.vercel.app//common/all");
+        const res = await axios.get("https://billing-backend-seven.vercel.app/common/all");
         setImages(res.data); // Assuming backend returns [{ _id, url, name }]
       } catch (err) {
         toast.error("❌ Failed to fetch images.");
@@ -64,7 +64,7 @@ const Images = () => {
       });
 
       try {
-        const res = await fetch("https://billing-backend-seven.vercel.app//common/upload-images", {
+        const res = await fetch("https://billing-backend-seven.vercel.app/common/upload-images", {
           method: "POST",
           body: formData,
         });
@@ -92,7 +92,7 @@ const Images = () => {
     if (!confirm) return;
 
     try {
-      await axios.delete(`https://billing-backend-seven.vercel.app//common/delete/${id}`);
+      await axios.delete(`https://billing-backend-seven.vercel.app/common/delete/${id}`);
       setImages((prev) => prev.filter((img) => img._id !== id));
       toast.success("🗑️ Image deleted successfully.");
     } catch (error) {

@@ -62,7 +62,7 @@ const IternaryList = ({ leads, setLeads }) => {
   useEffect(() => {
     const fetchHotels = async () => {
       try {
-        const res = await axios.get("https://billing-backend-seven.vercel.app//hotels"); // 🔁 update this URL based on your API
+        const res = await axios.get("https://billing-backend-seven.vercel.app/hotels"); // 🔁 update this URL based on your API
         const hotelOptions = res.data.map((hotel) => ({
           id: hotel._id,
           label: hotel.name,
@@ -81,7 +81,7 @@ const IternaryList = ({ leads, setLeads }) => {
   useEffect(() => {
     const fetchDestinations = async () => {
       try {
-        const res = await axios.get("https://billing-backend-seven.vercel.app//destinations"); // 🔁 update this URL based on your API
+        const res = await axios.get("https://billing-backend-seven.vercel.app/destinations"); // 🔁 update this URL based on your API
         const destinationOptions = res.data.map((destination) => ({
           id: destination._id,
           label: destination.name,
@@ -193,7 +193,7 @@ const IternaryList = ({ leads, setLeads }) => {
     try {
       console.log("📦 Sending Final Data:", finalData);
       const res = await axios.post(
-        "https://billing-backend-seven.vercel.app//Iternary/add",
+        "https://billing-backend-seven.vercel.app/Iternary/add",
         finalData
       );
       console.log("Itinerary saved:", res.data.message);

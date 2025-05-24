@@ -11,7 +11,7 @@ const InvoiceNewList = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await fetch("https://billing-backend-seven.vercel.app//invoices/all");
+        const response = await fetch("https://billing-backend-seven.vercel.app/invoices/all");
         const data = await response.json();
         setInvoices(data.data || []);
       } catch (error) {
@@ -35,7 +35,7 @@ const InvoiceNewList = () => {
     if (!window.confirm("Are you sure you want to delete this invoice?")) return;
     
     try {
-      await axios.delete(`https://billing-backend-seven.vercel.app//invoices/delete/${id}`);
+      await axios.delete(`https://billing-backend-seven.vercel.app/invoices/delete/${id}`);
       setInvoices((prev) => prev.filter((inv) => inv._id !== id));
       toast.success("Invoice deleted successfully!");
     } catch (error) {

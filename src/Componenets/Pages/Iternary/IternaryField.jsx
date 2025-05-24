@@ -20,7 +20,7 @@ const IternaryField = () => {
       try {
         // Using the dynamic id param instead of hardcoded (if needed)
         const res = await axios.get(
-          `https://billing-backend-seven.vercel.app//Iternary/mano/${
+          `https://billing-backend-seven.vercel.app/Iternary/mano/${
             id || "682c2f3ca98e563ebeb3ef01"
           }`
         );
@@ -52,7 +52,7 @@ const IternaryField = () => {
 
           try {
             const res = await axios.get(
-              `https://billing-backend-seven.vercel.app//gals/all?hotelId=${hotelId}`
+              `https://billing-backend-seven.vercel.app/gals/all?hotelId=${hotelId}`
             );
             return { hotelName, images: res.data };
           } catch {
@@ -87,7 +87,7 @@ const IternaryField = () => {
 
           try {
             const res = await axios.get(
-              `https://billing-backend-seven.vercel.app//dest/alls?destId=${destId}`
+              `https://billing-backend-seven.vercel.app/dest/alls?destId=${destId}`
             );
             return { destName, images: res.data };
           } catch {
@@ -105,7 +105,7 @@ const IternaryField = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const res = await axios.get("https://billing-backend-seven.vercel.app//common/all");
+        const res = await axios.get("https://billing-backend-seven.vercel.app/common/all");
         setImages(res.data);
       } catch {
         // Optional: show toast or silently fail
