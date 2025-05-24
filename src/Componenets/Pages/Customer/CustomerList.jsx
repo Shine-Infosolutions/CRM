@@ -111,7 +111,7 @@ const CustomerList = () => {
       </div>
 
       {/* Card view for mobile */}
-      <div className="sm:hidden space-y-5">
+      <div className="sm:hidden grid grid-cols-2 gap-4">
         {customer.length === 0 ? (
           <p className="text-center text-gray-500 mt-10">
             No details available.
@@ -120,25 +120,27 @@ const CustomerList = () => {
           customer.map((customer, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl shadow-md p-4 flex flex-col gap-2"
+              className="bg-white rounded-2xl shadow-md p-4 flex flex-col gap-2 min-w-0"
             >
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex items-center gap-3 mb-2 min-w-0">
                 <img
                   src={`https://i.pravatar.cc/40?u=${customer._id}`}
                   alt="Avatar"
                   className="w-12 h-12 rounded-full object-cover"
                 />
-                <div>
-                  <div className="font-semibold text-lg text-purple-700">
+                <div className="min-w-0">
+                  <div className="font-semibold text-lg text-purple-700 truncate">
                     {customer.name}
                   </div>
-                  <div className="text-gray-500 text-sm">{customer.email}</div>
+                  <div className="text-gray-500 text-sm break-all truncate">
+                    {customer.email}
+                  </div>
                 </div>
               </div>
-              <div className="text-gray-700 text-sm mb-1">
+              <div className="text-gray-700 text-sm mb-1 break-all">
                 <span className="font-semibold">Phone:</span> {customer.phone}
               </div>
-              <div className="text-gray-700 text-sm mb-2">
+              <div className="text-gray-700 text-sm mb-2 break-all">
                 <span className="font-semibold">Address:</span>{" "}
                 {customer.Address}
               </div>

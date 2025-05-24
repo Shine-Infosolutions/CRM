@@ -106,11 +106,11 @@ const InvoiceNewPrint = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="bg-white p-2 sm:p-10 text-xs sm:text-sm">
+    <div className="bg-white p-2 sm:p-6 md:p-10 text-xs sm:text-sm">
       {/* Print Button */}
       <div className="mb-4 text-right">
         <button
-          className="no-print bg-blue-600 text-white px-4 py-2 rounded"
+          className="no-print bg-blue-600 text-white px-4 py-2 rounded text-xs sm:text-sm"
           onClick={handlePrint}
         >
           🖨️ Print Invoice
@@ -118,46 +118,46 @@ const InvoiceNewPrint = () => {
       </div>
 
       {/* Printable Content */}
-      <div ref={componentRef}>
-        <div className="border-2 border-black max-w-full sm:max-w-5xl mx-auto">
-          <div className="flex justify-between items-center py-2 relative border-2 border-black border-l-0 border-r-0 border-t-0 p-4">
-            <h1 className="text-xm text-blue-600 font-bold text-center w-full">
-              T A X I N V O I C E
+      <div ref={componentRef} className="overflow-x-auto">
+        <div className="border-2 border-black max-w-full md:max-w-5xl mx-auto text-[0.65rem] sm:text-xs md:text-sm">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-center py-2 relative border-b-2 border-black p-2 sm:p-4">
+            <h1 className="text-base sm:text-xl text-blue-600 font-bold text-center w-full sm:w-auto">
+              T A X&nbsp;I N V O I C E
             </h1>
-            <span className="absolute top-2 right-2 text-xm font-semibold mt-[1px]">
+            <span className="sm:static absolute top-2 right-2 sm:relative text-xs sm:text-base font-semibold mt-1 sm:mt-0 bg-white px-1">
               ORIGINAL FOR RECIPIENT
             </span>
           </div>
 
           {/* Top Info Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 border-b-2 border-black">
-            <div className="flex flex-col sm:flex-row items-start gap-1 mb-2">
+            <div className="flex flex-col sm:flex-row items-start gap-2 mb-2 p-2">
               <img
                 src="/logo/Shine_logo.png"
                 alt="Logo"
-                className="w-24 h-20 object-contain mb-2 sm:mb-0"
+                className="w-20 h-16 object-contain mb-2 sm:mb-0"
               />
               <div>
                 <p className="text-base sm:text-lg font-bold">
                   SHINE INFOSOLUTIONS
                 </p>
-                <p className="text-xs">
+                <p>
                   GSTIN: <span className="font-bold">09FTJPS4577P1ZD</span>
                 </p>
-                <p className="text-xs">
+                <p>
                   87a, Bankati chak, Raiganj road, Near Chhoti Masjid, Gorakhpur
                 </p>
-                <p className="text-xs">Gorakhpur, UTTAR PRADESH, 273001</p>
-                <p className="text-xs">
+                <p>Gorakhpur, UTTAR PRADESH, 273001</p>
+                <p>
                   <strong>Mobile:</strong> +91 7054284786, 9140427414
                 </p>
-                <p className="text-xs">
+                <p>
                   <strong>Email:</strong> info@shineinfosolutions.in
                 </p>
               </div>
             </div>
-
-            <div className="grid grid-cols-2 border border-t-0 border-b-0 border-r-0 border-black text-xs sm:text-sm font-semibold text-black">
+            <div className="grid grid-cols-2 border border-t-0 border-b-0 border-r-0 border-black text-xs sm:text-sm font-semibold">
               <div className="border border-t-0 border-black p-2">
                 <p>Invoice #:</p>
                 <p className="font-bold">{invoice.invoiceNumber}</p>
@@ -180,8 +180,8 @@ const InvoiceNewPrint = () => {
           </div>
 
           {/* Customer Details */}
-          <div className="grid grid-cols-2">
-            <div className="border-r-2 border-black p-2 h-24">
+          <div className="grid grid-cols-1 sm:grid-cols-2">
+            <div className="border-r-2 border-black p-2">
               <p>
                 <strong>Customer Details:</strong>
               </p>
@@ -192,7 +192,7 @@ const InvoiceNewPrint = () => {
 
           {/* Items Table */}
           <div className="overflow-x-auto">
-            <table className="min-w-[600px] table-auto border-2 border-black w-full text-xs sm:text-md border-r-0 border-l-0">
+            <table className="min-w-[600px] w-full border-2 border-black text-[0.65rem] sm:text-xs md:text-sm">
               <thead>
                 <tr>
                   <th className="border border-black px-2 py-1">#</th>
@@ -239,6 +239,7 @@ const InvoiceNewPrint = () => {
               </tbody>
             </table>
           </div>
+
           <div className="p-2 text-xs font-bold">
             <p>
               Total Items / Qty: {invoice.productDetails.length} /{" "}
@@ -250,7 +251,7 @@ const InvoiceNewPrint = () => {
           </div>
 
           {/* Totals */}
-          <div className="grid grid-cols-2 border-t-2 border-black p-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 border-t-2 border-black p-1">
             <div></div>
             <div className="p-2 text-xs text-center font-semibold">
               <p>
@@ -265,24 +266,23 @@ const InvoiceNewPrint = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 border-2 border-black border-b-0 border-r-0 border-l-0">
-            <h2 className="font-bold p-2 text-md text-right mr-[-150px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 border-t-2 border-black">
+            <div></div>
+            <h2 className="font-bold p-2 text-md text-right">
               TOTAL: ₹ {invoice.amountDetails.totalAmount}
             </h2>
           </div>
 
           {/* Amount in words */}
-          <table className="w-full table-fixed border-collapse border border-black text-xs border-t-2">
-            <caption className="border-black border-t-2 border-4 border-r-0 border-l-0 border-b-0 caption-top p-2 text-right">
-              <strong>Total amount (in words): INR</strong>{" "}
-              {capitalizeWords(
-                toWords(invoice.amountDetails.totalAmount) + " only"
-              )}
-            </caption>
-          </table>
+          <div className="p-2 border-t-2 border-black text-right">
+            <strong>Total amount (in words): INR</strong>{" "}
+            {capitalizeWords(
+              toWords(invoice.amountDetails.totalAmount) + " only"
+            )}
+          </div>
 
           {/* Footer */}
-          <div className="grid grid-cols-2 border-t border-black">
+          <div className="grid grid-cols-1 sm:grid-cols-2 border-t border-black">
             <div className="p-4">
               <p className="font-bold mb-1">Bank Details:</p>
               <p>
@@ -298,7 +298,7 @@ const InvoiceNewPrint = () => {
                 <strong>Branch:</strong> GEETA PRESS
               </p>
             </div>
-            <div className="p-4 border-l border-black text-right flex flex-col justify-between">
+            <div className="p-4 border-t sm:border-t-0 sm:border-l border-black text-right flex flex-col justify-between">
               <div>
                 <p className="font-semibold">Amount Payable: ₹</p>
               </div>
