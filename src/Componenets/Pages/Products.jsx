@@ -249,35 +249,42 @@ export default function Product() {
                 </tbody>
               </table>
             </div>
-
             {/* Mobile Card View */}
-            <div className="md:hidden grid gap-6">
+            <div className="md:hidden grid grid-cols-1 xs:grid-cols-2 gap-4">
               {products.map((product) => (
                 <div
                   key={product._id}
-                  className="bg-gray-50 p-6 rounded-xl shadow-md"
+                  className="bg-white p-4 rounded-2xl shadow-lg border border-gray-100 flex flex-col gap-2 transition-transform hover:scale-[1.02] hover:shadow-xl min-w-0"
                 >
-                  <h3 className="text-lg font-bold text-blue-700">
-                    {product.productName}
-                  </h3>
-                  <p className="text-gray-600">
-                    Amount: ₹{product.productPrice}
-                  </p>
-                  <p className="text-gray-600">
-                    Discount: {product.productDiscount}%
-                  </p>
-                  <p className="text-gray-600">Unit: {product.productUnit}</p>
-                  <p className="text-gray-600">Stock: {product.productStock}</p>
-                  <div className="flex justify-end gap-2 mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-bold text-blue-700 truncate">
+                      {product.productName}
+                    </h3>
+                    <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded-full">
+                      {product.productUnit}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mb-1">
+                    <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-1 rounded">
+                      ₹{product.productPrice}
+                    </span>
+                    <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-2 py-1 rounded">
+                      {product.productDiscount}% OFF
+                    </span>
+                    <span className="bg-gray-100 text-gray-700 text-xs font-semibold px-2 py-1 rounded">
+                      Stock: {product.productStock}
+                    </span>
+                  </div>
+                  <div className="flex gap-2 mt-2">
                     <button
                       onClick={() => startEditingProduct(product)}
-                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-1"
+                      className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-semibold flex items-center justify-center gap-1 transition"
                     >
                       <Pencil className="w-4 h-4" /> Edit
                     </button>
                     <button
                       onClick={() => handleDelete(product._id)}
-                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-1"
+                      className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-semibold flex items-center justify-center gap-1 transition"
                     >
                       <Trash2 className="w-4 h-4" /> Delete
                     </button>
