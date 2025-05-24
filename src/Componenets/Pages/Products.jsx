@@ -208,46 +208,66 @@ export default function Product() {
           <>
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto">
-              <table className="w-full min-w-[700px] border-separate border-spacing-y-3">
-                <thead className="bg-blue-100 text-blue-700 text-sm uppercase">
-                  <tr>
-                    <th className="p-3 text-left">Name</th>
-                    <th className="p-3 text-left">Amount (₹)</th>
-                    <th className="p-3 text-left">Discount</th>
-                    <th className="p-3 text-left">Unit</th>
-                    <th className="p-3 text-left">Stock</th>
-                    <th className="p-3 text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map((product) => (
-                    <tr
-                      key={product._id}
-                      className="bg-gray-50 hover:bg-gray-100 transition-all rounded-lg"
-                    >
-                      <td className="p-3">{product.productName}</td>
-                      <td className="p-3">₹{product.productPrice}</td>
-                      <td className="p-3">{product.productDiscount}%</td>
-                      <td className="p-3">{product.productUnit}</td>
-                      <td className="p-3">{product.productStock}</td>
-                      <td className="p-3 flex justify-center gap-2">
-                        <button
-                          onClick={() => startEditingProduct(product)}
-                          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all"
-                        >
-                          <Pencil className="w-4 h-4" /> Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(product._id)}
-                          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all"
-                        >
-                          <Trash2 className="w-4 h-4" /> Delete
-                        </button>
-                      </td>
+              <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-4">
+                <table className="w-full min-w-[900px] border-separate border-spacing-y-3">
+                  <thead className="bg-blue-50 text-blue-700 text-sm uppercase">
+                    <tr>
+                      <th className="p-3 text-left">Name</th>
+                      <th className="p-3 text-left">Amount (₹)</th>
+                      <th className="p-3 text-left">Discount</th>
+                      <th className="p-3 text-left">Unit</th>
+                      <th className="p-3 text-left">Stock</th>
+                      <th className="p-3 text-center">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="text-gray-700">
+                    {products.map((product) => (
+                      <tr
+                        key={product._id}
+                        className="bg-gray-50 hover:bg-blue-100 transition-all rounded-lg shadow-sm"
+                      >
+                        <td className="p-3 font-semibold text-blue-800">
+                          {product.productName}
+                        </td>
+                        <td className="p-3">
+                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded font-semibold">
+                            ₹{product.productPrice}
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded font-semibold">
+                            {product.productDiscount}% OFF
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">
+                            {product.productUnit}
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded font-semibold">
+                            {product.productStock}
+                          </span>
+                        </td>
+                        <td className="p-3 flex justify-center gap-2">
+                          <button
+                            onClick={() => startEditingProduct(product)}
+                            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-semibold shadow transition-all"
+                          >
+                            <Pencil className="w-4 h-4" /> Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(product._id)}
+                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-semibold shadow transition-all"
+                          >
+                            <Trash2 className="w-4 h-4" /> Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
             {/* Mobile Card View */}
             <div className="md:hidden grid grid-cols-1 xs:grid-cols-2 gap-4">
