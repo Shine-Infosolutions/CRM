@@ -102,7 +102,7 @@ export default function Product() {
       <ToastContainer />
 
       {/* Form Section */}
-      <div className="bg-white p-8 rounded-2xl shadow-lg mb-10">
+      <div className=" p-8 rounded-2xl mb-10">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">
           🛒 {editingId ? "Update" : "Add"} Product
         </h2>
