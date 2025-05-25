@@ -101,14 +101,14 @@ const List = () => {
       </div>
 
       {/* Mobile Card View */}
-      <div className="sm:hidden grid grid-cols-2 gap-4">
+      <div className="sm:hidden grid grid-cols-1 xs:grid-cols-2 gap-4">
         {leads.length === 0 ? (
           <p className="text-center text-gray-500 mt-10">No leads available.</p>
         ) : (
           leads.map((lead, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl shadow-md p-4 flex flex-col gap-2 min-w-0"
+              className="bg-white rounded-2xl shadow-lg border-l-4 border-purple-600 p-4 flex flex-col gap-2 min-w-0 transition-transform hover:scale-[1.02]"
             >
               <div className="flex items-center gap-3 mb-2 min-w-0">
                 <img
@@ -119,7 +119,7 @@ const List = () => {
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div className="min-w-0">
-                  <div className="font-semibold text-lg text-purple-700 truncate">
+                  <div className="font-bold text-lg text-purple-700 truncate">
                     {lead.name}
                   </div>
                   <div className="text-gray-500 text-sm break-all truncate">
@@ -139,12 +139,11 @@ const List = () => {
                   ? new Date(lead.followUpDate).toLocaleDateString()
                   : "—"}
               </div>
-              <div className="text-gray-700 text-sm mb-2 break-all">
-                <span className="font-semibold">Status:</span>{" "}
+              <div className="flex items-center gap-2 mt-1">
                 <span
-                  className={`text-xs px-3 py-1 rounded-full font-semibold ${
+                  className={`text-xs px-3 py-1 rounded-full font-semibold shadow ${
                     lead.status === "true"
-                      ? "bg-purple-700 text-white"
+                      ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
                       : "bg-gray-200 text-gray-700"
                   }`}
                 >
