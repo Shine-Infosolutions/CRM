@@ -69,7 +69,7 @@ const LeadsForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log("Submitting form data:", formData);
     try {
       if (id) {
         await axios.put(
@@ -111,6 +111,18 @@ const LeadsForm = () => {
                 placeholder="Enter full name"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={formData.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div>
+              <label className="block mb-2 font-semibold">Email</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter email address"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={formData.email}
                 onChange={handleChange}
                 required
               />
