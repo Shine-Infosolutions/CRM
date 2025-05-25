@@ -208,7 +208,7 @@ const Images = () => {
             {images.map((img, idx) => (
               <div
                 key={img._id}
-                className="bg-gradient-to-br from-indigo-50 to-white rounded-2xl shadow-lg p-4 flex flex-col items-center gap-3 border border-indigo-100"
+                className="bg-white rounded-2xl shadow-lg p-4 flex flex-col items-center gap-3 border border-indigo-100"
               >
                 <div className="w-full flex justify-between items-center mb-2">
                   <span className="font-semibold text-indigo-700 text-base truncate max-w-[70%]">
