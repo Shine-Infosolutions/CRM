@@ -10,7 +10,9 @@ const Images = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const res = await axios.get("https://billing-backend-seven.vercel.app/common/all");
+        const res = await axios.get(
+          "https://billing-backend-seven.vercel.app/common/all"
+        );
         setImages(res.data); // Assuming backend returns [{ _id, url, name }]
       } catch (err) {
         toast.error("❌ Failed to fetch images.");
@@ -64,10 +66,13 @@ const Images = () => {
       });
 
       try {
-        const res = await fetch("https://billing-backend-seven.vercel.app/common/upload-images", {
-          method: "POST",
-          body: formData,
-        });
+        const res = await fetch(
+          "https://billing-backend-seven.vercel.app/common/upload-images",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
         const data = await res.json();
 
@@ -88,11 +93,15 @@ const Images = () => {
   };
 
   const removeImage = async (id) => {
-    const confirm = window.confirm("Are you sure you want to delete this image?");
+    const confirm = window.confirm(
+      "Are you sure you want to delete this image?"
+    );
     if (!confirm) return;
 
     try {
-      await axios.delete(`https://billing-backend-seven.vercel.app/common/delete/${id}`);
+      await axios.delete(
+        `https://billing-backend-seven.vercel.app/common/delete/${id}`
+      );
       setImages((prev) => prev.filter((img) => img._id !== id));
       toast.success("🗑️ Image deleted successfully.");
     } catch (error) {
@@ -105,7 +114,9 @@ const Images = () => {
       <Toaster position="top-center" />
 
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-indigo-600">Bulk Image Upload</h2>
+        <h2 className="text-3xl font-bold text-indigo-600">
+          Bulk Image Upload
+        </h2>
         <p className="mt-2 text-gray-500 text-sm">
           Max 20 images | Max 500 KB per image
         </p>
@@ -145,51 +156,81 @@ const Images = () => {
         </label>
       </div>
 
-      {/* Images Table */}
       {images.length > 0 && (
-        <div className="overflow-auto mt-10">
-          <h3 className="text-2xl font-semibold text-gray-700 mb-4">
-            Uploaded Images
-          </h3>
-          <div className="overflow-x-auto">
-          <table className="min-w-full bg-white rounded-lg shadow-md overflow-hidden">
-              <thead>
-                <tr className="bg-gray-300 text-black uppercase text-sm">
-                  <th className="py-3 px-6">Sr. No</th>
-                  <th className="py-3 px-6">Image Name</th>
-                  <th className="py-3 px-6">Preview</th>
-                  <th className="py-3 px-6">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {images.map((img, idx) => (
-                  <tr
-                    key={img._id}
-                    className="border-t hover:bg-gray-50 text-center text-gray-600"
-                  >
-                    <td className="py-3 px-6">{idx + 1}</td>
-                    <td className="py-3 px-6 truncate">{img.name || "N/A"}</td>
-                    <td className="py-3 px-6 flex justify-center">
-                      <img
-                        src={img.url}
-                        alt="uploaded"
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                    </td>
-                    <td className="py-3 px-6">
-                      <button
-                        onClick={() => removeImage(img._id)}
-                        className="bg-red-500 hover:bg-red-700 text-white py-1 px-4 rounded"
-                      >
-                        Delete
-                      </button>
-                    </td>
+        <>
+          <div className="hidden sm:block overflow-auto mt-10">
+            <h3 className="text-2xl font-semibold text-gray-700 mb-4">
+              Uploaded Images
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white rounded-lg shadow-md overflow-hidden">
+                <thead>
+                  <tr className="bg-gray-300 text-black uppercase text-sm">
+                    <th className="py-3 px-6">Sr. No</th>
+                    <th className="py-3 px-6">Image Name</th>
+                    <th className="py-3 px-6">Preview</th>
+                    <th className="py-3 px-6">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {images.map((img, idx) => (
+                    <tr
+                      key={img._id}
+                      className="border-t hover:bg-gray-50 text-center text-gray-600"
+                    >
+                      <td className="py-3 px-6">{idx + 1}</td>
+                      <td className="py-3 px-6 truncate">
+                        {img.name || "N/A"}
+                      </td>
+                      <td className="py-3 px-6 flex justify-center">
+                        <img
+                          src={img.url}
+                          alt="uploaded"
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      </td>
+                      <td className="py-3 px-6">
+                        <button
+                          onClick={() => removeImage(img._id)}
+                          className="bg-red-500 hover:bg-red-700 text-white py-1 px-4 rounded"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+          {/* Mobile Images Card View */}
+          <div className="sm:hidden grid grid-cols-1 xs:grid-cols-2 gap-4 mt-10">
+            {images.map((img, idx) => (
+              <div
+                key={img._id}
+                className="bg-white rounded-xl shadow-md p-4 flex flex-col items-center gap-2 border border-gray-200"
+              >
+                <div className="w-full flex justify-between items-center">
+                  <span className="font-semibold text-indigo-700 text-sm truncate max-w-[70%]">
+                    {img.name || "N/A"}
+                  </span>
+                  <span className="text-xs text-gray-400">#{idx + 1}</span>
+                </div>
+                <img
+                  src={img.url}
+                  alt={img.name}
+                  className="w-20 h-20 rounded-full object-cover border border-gray-100"
+                />
+                <button
+                  onClick={() => removeImage(img._id)}
+                  className="mt-2 w-full bg-red-500 hover:bg-red-700 text-white py-1 rounded font-semibold transition"
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
