@@ -3,14 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-const LeadsForm = ({ leads, setLeads }) => {
+const LeadsForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    secondaryPhone: "",
     Address: "",
     enquiry: "Select Enquiry",
     followUpDate: "",
@@ -45,7 +44,6 @@ const LeadsForm = ({ leads, setLeads }) => {
             name: name || "",
             email: email || "",
             phone: phone || "",
-            secondaryPhone: "", // backend doesn't use it, optional
             Address: Address || "",
             enquiry: enquiry || "Select Enquiry",
             followUpDate: followUpDate || "",
@@ -133,19 +131,6 @@ const LeadsForm = ({ leads, setLeads }) => {
 
           {/* Secondary Number & Address */}
           <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block mb-2 font-semibold">
-                Secondary Number
-              </label>
-              <input
-                type="tel"
-                name="secondaryPhone"
-                placeholder="Optional number"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={formData.secondaryPhone}
-                onChange={handleChange}
-              />
-            </div>
             <div>
               <label className="block mb-2 font-semibold">Address</label>
               <input

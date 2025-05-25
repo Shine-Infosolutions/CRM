@@ -26,7 +26,7 @@ import IternaryField from "./Componenets/Pages/Iternary/IternaryField";
 
 function App() {
   const navigate = useNavigate();
-  const [leads, setLeads] = useState([]);
+  // const [leads, setLeads] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   // const [customer, setCustomer] = useState([]);
 
@@ -60,10 +60,10 @@ function App() {
               <Route path="addimages" element={<AddImage />} />
               <Route path="destination" element={<Destination />} />
               <Route path="DestinationImages" element={<DestinationImages />} />
-              <Route path="list" element={<List leads={leads} />} />
+              <Route path="list" element={<List/>} />
               <Route
                 path="leadsform"
-                element={<LeadsForm setLeads={setLeads} />}
+                element={<LeadsForm/>}
               />
               <Route path="CustomerList" element={<CustomerList />} />
               <Route path="CustomerForm" element={<CustomerForm />} />
