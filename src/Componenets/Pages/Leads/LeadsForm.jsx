@@ -1,17 +1,20 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // hook to navigate to another page
-import { ToastContainer, toast } from 'react-toastify'; // for toast notifications
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
-const LeadsForm = ({leads, setLeads}) => {
-  const navigate = useNavigate(); // hook to navigate to another page
+const LeadsForm = ({ leads, setLeads }) => {
+  const navigate = useNavigate();
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
+    secondaryPhone: "",
     Address: "",
     enquiry: "Select Enquiry",
     followUpDate: "",
-    followUpStatus: "pending",
+    followUpStatus: "Pending",
     meetingdate: "",
     status: "true",
     calldate: "",
@@ -19,42 +22,82 @@ const LeadsForm = ({leads, setLeads}) => {
     notes: "",
   });
 
+  useEffect(() => {
+    if (id) {
+      axios
+        .get(`https://billing-backend-seven.vercel.app/lead/mano/${id}`)
+        .then((res) => {
+          const {
+            name,
+            email,
+            phone,
+            Address,
+            enquiry,
+            followUpDate,
+            followUpStatus,
+            meetingdate,
+            status,
+            calldate,
+            update,
+            notes,
+          } = res.data.data;
+          setFormData({
+            name: name || "",
+            email: email || "",
+            phone: phone || "",
+            secondaryPhone: "", // backend doesn't use it, optional
+            Address: Address || "",
+            enquiry: enquiry || "Select Enquiry",
+            followUpDate: followUpDate || "",
+            followUpStatus: followUpStatus || "Pending",
+            meetingdate: meetingdate || "",
+            status: status || "true",
+            calldate: calldate || "",
+            update: update || "",
+            notes: notes || "",
+          });
+        })
+        .catch((err) => {
+          toast.error("Failed to load Leads data");
+          console.error(err);
+        });
+    }
+  }, [id]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLeads((prev) => [...prev, formData]); // update state
-    toast.success("Lead submitted successfully!"); // show toast
-  
-    setTimeout(() => {
-      navigate("/List"); // navigate after delay
-    }, 2000); // wait 2 seconds
-  
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      Address: "",
-      enquiry: "Select Enquiry",
-      followUpDate: "",
-      followUpStatus: "pending",
-      meetingdate: "",
-      status: "true",
-      calldate: "",
-      update: "",
-      notes: "",
-    });
+
+    try {
+      if (id) {
+        await axios.put(
+          `https://billing-backend-seven.vercel.app/lead/update/${id}`,
+          formData
+        );
+        toast.success("Lead updated successfully");
+      } else {
+        await axios.post(
+          "https://billing-backend-seven.vercel.app/lead/add",
+          formData
+        );
+        toast.success("Lead added successfully");
+      }
+      navigate("/List");
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.error(error);
+    }
   };
 
   return (
     <div className="mx-auto max-w-6xl p-6 rounded-2xl shadow-xl border border-gray-200 bg-white h-[100vh]">
       <ToastContainer position="top-right" reverseOrder={false} />
       <h2 className="text-4xl font-bold mb-6 text-center text-blue-700 tracking-wide">
-        Add New Lead
+        {id ? "Update Lead" : "Add New Lead"}
       </h2>
       <hr className="mb-6 border-gray-300" />
 
@@ -91,13 +134,15 @@ const LeadsForm = ({leads, setLeads}) => {
           {/* Secondary Number & Address */}
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="block mb-2 font-semibold">Secondary Number</label>
+              <label className="block mb-2 font-semibold">
+                Secondary Number
+              </label>
               <input
                 type="tel"
-                name="phone"
+                name="secondaryPhone"
                 placeholder="Optional number"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={formData.phone}
+                value={formData.secondaryPhone}
                 onChange={handleChange}
               />
             </div>
@@ -121,21 +166,27 @@ const LeadsForm = ({leads, setLeads}) => {
               <label className="block mb-2 font-semibold">Enquiry Type</label>
               <select
                 name="enquiry"
+                required
                 className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={formData.enquiry}
                 onChange={handleChange}
               >
-                <option value="Select Enquiry">Select Enquiry</option>
+                <option value="Select Enquiry" disabled>
+                  Select Enquiry
+                </option>
                 <option value="Enquiry 1">Enquiry 1</option>
                 <option value="Enquiry 2">Enquiry 2</option>
                 <option value="Enquiry 3">Enquiry 3</option>
               </select>
             </div>
             <div>
-              <label className="block mb-2 font-semibold">Follow-Up Date & Time</label>
+              <label className="block mb-2 font-semibold">
+                Follow-Up Date & Time
+              </label>
               <input
                 type="datetime-local"
                 name="followUpDate"
+                required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={formData.followUpDate}
                 onChange={handleChange}
@@ -146,9 +197,12 @@ const LeadsForm = ({leads, setLeads}) => {
           {/* Follow-up Status & Meeting Date */}
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="block mb-2 font-semibold">Follow-Up Status</label>
+              <label className="block mb-2 font-semibold">
+                Follow-Up Status
+              </label>
               <select
                 name="followUpStatus"
+                required
                 className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={formData.followUpStatus}
                 onChange={handleChange}
@@ -163,6 +217,7 @@ const LeadsForm = ({leads, setLeads}) => {
               <input
                 type="datetime-local"
                 name="meetingdate"
+                required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={formData.meetingdate}
                 onChange={handleChange}
@@ -176,6 +231,7 @@ const LeadsForm = ({leads, setLeads}) => {
               <label className="block mb-2 font-semibold">Lead Status</label>
               <select
                 name="status"
+                required
                 className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={formData.status}
                 onChange={handleChange}
@@ -189,6 +245,7 @@ const LeadsForm = ({leads, setLeads}) => {
               <input
                 type="datetime-local"
                 name="calldate"
+                required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={formData.calldate}
                 onChange={handleChange}
@@ -202,6 +259,7 @@ const LeadsForm = ({leads, setLeads}) => {
             <input
               type="datetime-local"
               name="update"
+              required
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={formData.update}
               onChange={handleChange}
@@ -213,6 +271,7 @@ const LeadsForm = ({leads, setLeads}) => {
             <label className="block mb-2 font-semibold">Additional Notes</label>
             <textarea
               name="notes"
+              required
               value={formData.notes}
               onChange={handleChange}
               placeholder="Write any important notes here..."
@@ -224,12 +283,10 @@ const LeadsForm = ({leads, setLeads}) => {
           {/* Submit */}
           <div className="text-center">
             <button
-            onClick={handleSubmit}
-              disabled={!formData.name || !formData.phone || !formData.Address}
               type="submit"
               className="px-10 py-3 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-xl transition-all duration-200"
             >
-              Submit Lead
+              {id ? "Update" : "Submit"} Lead
             </button>
           </div>
         </form>
