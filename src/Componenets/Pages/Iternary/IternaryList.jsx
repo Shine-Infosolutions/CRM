@@ -234,7 +234,7 @@ const IternaryList = ({ leads, setLeads }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-4 px-1 flex justify-center">
-      <div className="w-full max-w-2xl">
+      <div className="w-full">
         <ToastContainer position="top-right" reverseOrder={false} />
 
         <div
@@ -266,9 +266,9 @@ const IternaryList = ({ leads, setLeads }) => {
           </Link>
           <hr className="mb-4 border-gray-300" />
 
-          <form className="space-y-8 text-gray-700">
-            {/* Name & Primary Number */}
-            <div className="grid md:grid-cols-2 gap-6">
+          <form className="space-y-8 text-gray-700 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 sm:p-8 mt-4">
+            {/* Tour Title & Days */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block mb-2 font-semibold">Tour Title</label>
                 <input
@@ -283,7 +283,7 @@ const IternaryList = ({ leads, setLeads }) => {
               </div>
               <div>
                 <label className="block mb-2 font-semibold">
-                  Number of days
+                  Number of Days
                 </label>
                 <input
                   type="number"
@@ -297,8 +297,8 @@ const IternaryList = ({ leads, setLeads }) => {
               </div>
             </div>
 
-            {/* Secondary Number & Address */}
-            <div className="grid md:grid-cols-2 gap-6">
+            {/* Date, Pickup, Drop, Vehicle */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block mb-2 font-semibold">
                   Date of Journey
@@ -306,7 +306,6 @@ const IternaryList = ({ leads, setLeads }) => {
                 <input
                   type="date"
                   name="date"
-                  placeholder="Optional number"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={formData.date}
                   onChange={handleChange}
@@ -352,14 +351,13 @@ const IternaryList = ({ leads, setLeads }) => {
               </div>
             </div>
 
-            {/* Enquiry & Follow-up */}
-            <div className="grid md:grid-cols-2 gap-6">
+            {/* Time, Package, Cost */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block mb-2 font-semibold">Pickup Time</label>
                 <input
                   type="time"
                   name="pickTime"
-                  placeholder="Pickup Time"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={formData.pickTime}
                   onChange={handleChange}
@@ -371,17 +369,12 @@ const IternaryList = ({ leads, setLeads }) => {
                 <input
                   type="time"
                   name="dropTime"
-                  placeholder="Drop address"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={formData.dropTime}
                   onChange={handleChange}
                   required
                 />
               </div>
-            </div>
-
-            {/* Follow-up Status & Meeting Date */}
-            <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block mb-2 font-semibold">Package Name</label>
                 <input
@@ -404,8 +397,8 @@ const IternaryList = ({ leads, setLeads }) => {
               </div>
             </div>
 
-            {/* Status & Call Date */}
-            <div className="grid md:grid-cols-2 gap-6">
+            {/* Person, Hotel Type, Advance */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block mb-2 font-semibold">
                   Number of Person
@@ -426,17 +419,15 @@ const IternaryList = ({ leads, setLeads }) => {
                   value={formData.hotelType}
                   onChange={handleChange}
                 >
-                  <option> Budget Friendly Hotel</option>
+                  <option>Budget Friendly Hotel</option>
                   <option>3-Star Hotel</option>
                   <option>4-Star Hotel</option>
                   <option>5-Star Hotel</option>
                 </select>
               </div>
-            </div>
-            <div>
               <div>
                 <label className="block mb-2 font-semibold">
-                  Number of days
+                  Advance Payment
                 </label>
                 <input
                   type="number"
@@ -450,58 +441,65 @@ const IternaryList = ({ leads, setLeads }) => {
               </div>
             </div>
 
-            {/* Dynamic Days Input Fields  */}
-            <div className="dayNavigate flex items-center justify-between flex-wrap gap-2 mb-6">
-              {/* Tabs Container */}
-              <div className="flex flex-wrap gap-2">
-                {dynamicFields.map((_, i) => (
-                  <div key={i} className="relative">
+            <hr className="my-4 border-gray-200" />
+
+            {/* Dynamic Days Tabs */}
+            <div className="dayNavigate flex flex-wrap gap-2 mb-6 items-center">
+              {dynamicFields.map((_, i) => (
+                <div key={i} className="relative">
+                  <button
+                    type="button"
+                    className={`px-4 py-2 rounded-lg font-semibold shadow-sm transition ${
+                      activeDay === i + 1
+                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-blue-100"
+                    }`}
+                    onClick={() => setActiveDay(i + 1)}
+                  >
+                    Day {i + 1}
+                  </button>
+                  {dynamicFields.length > 1 && (
                     <button
                       type="button"
-                      className={`px-4 py-2 rounded-lg ${
-                        activeDay === i + 1
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-200 text-gray-700"
-                      }`}
-                      onClick={() => setActiveDay(i + 1)}
-                    >
-                      Day {i + 1}
-                    </button>
-                    {/* Cross Icon */}
-                    <button
-                      type="button"
-                      className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white rounded-full w-5 h-5 flex justify-center text-xs"
+                      title="Delete this day"
+                      className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow"
                       onClick={() => deleteDay(i)}
                     >
                       ×
                     </button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Add/Remove Day Buttons */}
-              <div className="flex gap-2">
+                  )}
+                </div>
+              ))}
+              <div className="flex gap-2 ml-2">
                 <button
                   type="button"
                   onClick={addDayTab}
-                  className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-all duration-200"
+                  title="Add Day"
+                  className="flex items-center gap-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow transition-all duration-200"
                 >
-                  Add More Days
+                  <span className="text-lg">＋</span>
+                  <span className="hidden xs:inline">Add Day</span>
                 </button>
                 <button
                   type="button"
                   onClick={removeDayTab}
-                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-all duration-200"
+                  disabled={dynamicFields.length <= 1}
+                  title="Remove Last Day"
+                  className={`flex items-center gap-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg shadow transition-all duration-200 ${
+                    dynamicFields.length <= 1
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
                 >
-                  Remove a Day
+                  <span className="text-lg">−</span>
+                  <span className="hidden xs:inline">Remove Day</span>
                 </button>
               </div>
             </div>
-
             {/* Schedule Input for Active Day */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">{`Schedule for Day ${activeDay}`}</h3>
-              <div className="flex space-x-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   id="schedule-input"
@@ -523,7 +521,6 @@ const IternaryList = ({ leads, setLeads }) => {
                   Add
                 </button>
               </div>
-
               <ul className="list-disc pl-5 space-y-1">
                 {daySchedules[activeDay - 1].map((item, index) => (
                   <li key={index} className="flex justify-between items-center">
@@ -539,141 +536,152 @@ const IternaryList = ({ leads, setLeads }) => {
                 ))}
               </ul>
             </div>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Cost Includes</h3>
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  id="cost-include-input"
-                  placeholder="Add cost include item"
-                  className="flex-1 p-3 border border-gray-300 rounded-lg"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && e.target.value.trim() !== "") {
-                      addCostInclude(e.target.value.trim());
-                      e.target.value = "";
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const input = document.getElementById("cost-include-input");
-                    if (input && input.value.trim() !== "") {
-                      addCostInclude(input.value.trim());
-                      input.value = "";
-                    }
-                  }}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-                >
-                  Add
-                </button>
+
+            <hr className="my-4 border-gray-200" />
+
+            {/* Cost Includes/Excludes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Cost Includes</h3>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    id="cost-include-input"
+                    placeholder="Add cost include item"
+                    className="flex-1 p-3 border border-gray-300 rounded-lg"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && e.target.value.trim() !== "") {
+                        addCostInclude(e.target.value.trim());
+                        e.target.value = "";
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const input =
+                        document.getElementById("cost-include-input");
+                      if (input && input.value.trim() !== "") {
+                        addCostInclude(input.value.trim());
+                        input.value = "";
+                      }
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                  >
+                    Add
+                  </button>
+                </div>
+                <ul className="list-disc pl-5 space-y-1">
+                  {costInclude.map((item, idx) => (
+                    <li key={idx} className="flex justify-between items-center">
+                      <span>{item}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeCostInclude(idx)}
+                        className="text-red-500 text-sm"
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul className="list-disc pl-5 space-y-1">
-                {costInclude.map((item, idx) => (
-                  <li key={idx} className="flex justify-between items-center">
-                    <span>{item}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeCostInclude(idx)}
-                      className="text-red-500 text-sm"
-                    >
-                      Remove
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Cost Exclude Section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Cost Excludes</h3>
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  id="cost-exclude-input"
-                  placeholder="Add cost exclude item"
-                  className="flex-1 p-3 border border-gray-300 rounded-lg"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && e.target.value.trim() !== "") {
-                      addCostExclude(e.target.value.trim());
-                      e.target.value = "";
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const input = document.getElementById("cost-exclude-input");
-                    if (input && input.value.trim() !== "") {
-                      addCostExclude(input.value.trim());
-                      input.value = "";
-                    }
-                  }}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-                >
-                  Add
-                </button>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Cost Excludes</h3>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    id="cost-exclude-input"
+                    placeholder="Add cost exclude item"
+                    className="flex-1 p-3 border border-gray-300 rounded-lg"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && e.target.value.trim() !== "") {
+                        addCostExclude(e.target.value.trim());
+                        e.target.value = "";
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const input =
+                        document.getElementById("cost-exclude-input");
+                      if (input && input.value.trim() !== "") {
+                        addCostExclude(input.value.trim());
+                        input.value = "";
+                      }
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                  >
+                    Add
+                  </button>
+                </div>
+                <ul className="list-disc pl-5 space-y-1">
+                  {costExclude.map((item, idx) => (
+                    <li key={idx} className="flex justify-between items-center">
+                      <span>{item}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeCostExclude(idx)}
+                        className="text-red-500 text-sm"
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul className="list-disc pl-5 space-y-1">
-                {costExclude.map((item, idx) => (
-                  <li key={idx} className="flex justify-between items-center">
-                    <span>{item}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeCostExclude(idx)}
-                      className="text-red-500 text-sm"
-                    >
-                      Remove
-                    </button>
-                  </li>
-                ))}
-              </ul>
             </div>
 
-            {/* hotel dropdown  */}
-            <div className="hotelMenu">
-              <label className="block" htmlFor="hotels">
-                Select Hotel
-              </label>
-              <MultiSelect
-                options={hotels}
-                value={formData.hotelSelected}
-                onChange={(selected) => {
-                  setFormData((prev) => ({ ...prev, hotelSelected: selected }));
-                }}
-                labelledBy="Select"
-              />
-            </div>
+            <hr className="my-4 border-gray-200" />
 
-            {/* Destination dropdown  */}
-            <div className="destinationMenu">
-              <label className="block" htmlFor="hotels">
-                Select Destinations
-              </label>
-              <MultiSelect
-                options={destinations}
-                value={formData.destinations}
-                onChange={(selected) => {
-                  setFormData((prev) => ({ ...prev, destinations: selected }));
-                }}
-                labelledBy="Select"
-              />
+            {/* Hotel & Destination MultiSelect */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block font-semibold mb-2">Select Hotel</label>
+                <MultiSelect
+                  options={hotels}
+                  value={formData.hotelSelected}
+                  onChange={(selected) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      hotelSelected: selected,
+                    }));
+                  }}
+                  labelledBy="Select"
+                />
+              </div>
+              <div>
+                <label className="block font-semibold mb-2">
+                  Select Destinations
+                </label>
+                <MultiSelect
+                  options={destinations}
+                  value={formData.destinations}
+                  onChange={(selected) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      destinations: selected,
+                    }));
+                  }}
+                  labelledBy="Select"
+                />
+              </div>
             </div>
 
             {/* Submit */}
-            <div className="text-center">
+            <div className="text-center mt-6">
               <button
-                onClick={handleSubmit}
+                type="submit"
                 disabled={
                   !formData.title ||
                   !formData.days ||
                   !formData.pickLoc ||
                   !formData.dropLoc
                 }
-                type="submit"
-                className="px-10 py-3 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-xl transition-all duration-200"
+                className="w-full sm:w-auto px-10 py-3 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-xl transition-all duration-200"
               >
-                Submit Lead
+                Submit Tour
               </button>
             </div>
           </form>
