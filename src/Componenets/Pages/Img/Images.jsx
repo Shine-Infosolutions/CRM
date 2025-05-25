@@ -208,22 +208,24 @@ const Images = () => {
             {images.map((img, idx) => (
               <div
                 key={img._id}
-                className="bg-white rounded-xl shadow-md p-4 flex flex-col items-center gap-2 border border-gray-200"
+                className="bg-gradient-to-br from-indigo-50 to-white rounded-2xl shadow-lg p-4 flex flex-col items-center gap-3 border border-indigo-100"
               >
-                <div className="w-full flex justify-between items-center">
-                  <span className="font-semibold text-indigo-700 text-sm truncate max-w-[70%]">
+                <div className="w-full flex justify-between items-center mb-2">
+                  <span className="font-semibold text-indigo-700 text-base truncate max-w-[70%]">
                     {img.name || "N/A"}
                   </span>
                   <span className="text-xs text-gray-400">#{idx + 1}</span>
                 </div>
-                <img
-                  src={img.url}
-                  alt={img.name}
-                  className="w-20 h-20 rounded-full object-cover border border-gray-100"
-                />
+                <div className="w-full flex justify-center">
+                  <img
+                    src={img.url}
+                    alt={img.name}
+                    className="w-28 h-28 rounded-xl object-cover border-2 border-indigo-200 shadow"
+                  />
+                </div>
                 <button
                   onClick={() => removeImage(img._id)}
-                  className="mt-2 w-full bg-red-500 hover:bg-red-700 text-white py-1 rounded font-semibold transition"
+                  className="mt-3 w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white py-2 rounded-lg font-semibold shadow transition"
                 >
                   Delete
                 </button>
