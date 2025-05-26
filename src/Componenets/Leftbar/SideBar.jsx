@@ -42,7 +42,7 @@ const Sidebar = () => {
       <div className="flex items-center gap-2 mb-6">
         <img src="/src/assets/Logo.png" alt="Logo" className="w-10 h-10" />
         {!collapsed && (
-          <h1 className="text-xl font-bold tracking-wide">DashWind</h1>
+          <h1 className="text-md font-bold font-serif tracking-wide">Shine Infosolution</h1>
         )}
       </div>
 

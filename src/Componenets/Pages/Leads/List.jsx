@@ -7,6 +7,16 @@ const List = () => {
   const navigate = useNavigate();
   const [leads, setLeads] = useState([]);
 
+  const moveLeadDown = (index) => {
+    if (index < leads.length - 1) {
+      const updatedLeads = [...leads];
+      const temp = updatedLeads[index];
+      updatedLeads[index] = updatedLeads[index + 1];
+      updatedLeads[index + 1] = temp;
+      setLeads(updatedLeads);
+    }
+  };
+
   useEffect(() => {
     fetchLeads();
   }, []);
@@ -21,6 +31,7 @@ const List = () => {
       toast.error("Failed to fetch leads");
     }
   };
+  console.log(leads);
   return (
     <div className="p-6">
       <Toaster />
@@ -39,6 +50,7 @@ const List = () => {
         <table className="min-w-full table-auto text-sm text-left">
           <thead className="bg-gray-100 text-gray-600 font-semibold">
             <tr>
+              <th className="px-6 py-4">Sr. No</th>
               <th className="px-6 py-4">Name</th>
               <th className="px-6 py-4">Phone</th>
               <th className="px-6 py-4">Email</th>
@@ -50,7 +62,7 @@ const List = () => {
           <tbody className="text-gray-700">
             {leads.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-8 text-gray-500">
+                <td colSpan="7" className="text-center py-8 text-gray-500">
                   No leads available.
                 </td>
               </tr>
@@ -60,6 +72,7 @@ const List = () => {
                   key={index}
                   className="hover:bg-gray-50 border-t border-gray-200 transition-all duration-200"
                 >
+                  <td className="px-6 py-4 text-black">{lead.srNo}</td>
                   <td className="px-6 py-4 flex items-center gap-3">
                     <img
                       src={`https://i.pravatar.cc/40?u=${
@@ -72,6 +85,7 @@ const List = () => {
                       <div className="font-medium">{lead.name}</div>
                     </div>
                   </td>
+
                   <td className="px-6 py-4">{lead.phone}</td>
                   <td className="px-6 py-4">{lead.email}</td>
                   <td className="px-6 py-4">{lead.enquiry}</td>
@@ -81,17 +95,14 @@ const List = () => {
                       : "—"}
                   </td>
                   <td className="px-6 py-4">
-                    <span
-                      className={`text-xs px-3 py-1 rounded-full font-semibold ${
-                        lead.status === "true"
-                          ? "bg-purple-700 text-white"
-                          : "bg-gray-200 text-gray-700"
-                      }`}
+                    <button
+                      className="ml-2 px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs font-semibold"
+                      onClick={() => moveLeadDown(index)}
+                      disabled={index === leads.length - 1}
+                      title="Move Down"
                     >
-                      {lead.status === "true"
-                        ? "In Progress"
-                        : "Not Interested"}
-                    </span>
+                      ↓
+                    </button>
                   </td>
                 </tr>
               ))
@@ -149,6 +160,14 @@ const List = () => {
                 >
                   {lead.status === "true" ? "In Progress" : "Not Interested"}
                 </span>
+                <button
+                  className="ml-2 px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs font-semibold"
+                  onClick={() => moveLeadDown(index)}
+                  disabled={index === leads.length - 1}
+                  title="Move Down"
+                >
+                  ↓
+                </button>
               </div>
             </div>
           ))
