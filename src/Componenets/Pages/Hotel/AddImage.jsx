@@ -22,7 +22,9 @@ const AddImage = () => {
 
   const fetchHotels = async () => {
     try {
-      const res = await axios.get("https://billing-backend-seven.vercel.app/hotels");
+      const res = await axios.get(
+        "https://billing-backend-seven.vercel.app/hotels"
+      );
       setHotels(res.data);
     } catch (err) {
       toast.error("❌ Failed to fetch hotels.");
@@ -70,7 +72,9 @@ const AddImage = () => {
     }
 
     if (newFiles.length > 20) {
-      toast.error("⚠️ You can only select up to 20 new (non-duplicate) images.");
+      toast.error(
+        "⚠️ You can only select up to 20 new (non-duplicate) images."
+      );
       return;
     }
 
@@ -100,11 +104,15 @@ const AddImage = () => {
   };
 
   const removeImage = async (id) => {
-    const confirm = window.confirm("Are you sure you want to delete this image?");
+    const confirm = window.confirm(
+      "Are you sure you want to delete this image?"
+    );
     if (!confirm) return;
 
     try {
-      await axios.delete(`https://billing-backend-seven.vercel.app/gals/delete/${id}`);
+      await axios.delete(
+        `https://billing-backend-seven.vercel.app/gals/delete/${id}`
+      );
       toast.success("🗑️ Image deleted successfully.");
       fetchImages(); // refresh list
     } catch (error) {
@@ -154,57 +162,58 @@ const AddImage = () => {
       </div>
 
       <div className="mx-auto p-6"></div>
-        <Toaster position="top-center" reverseOrder={false} />
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-indigo-600">
-            Bulk Image Upload
-          </h2>
-          <p className="mt-2 text-gray-500 text-sm">
-            Max 20 images | Max 500 KB per image
-          </p>
+      <Toaster position="top-center" reverseOrder={false} />
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-indigo-600">
+          Bulk Image Upload
+        </h2>
+        <p className="mt-2 text-gray-500 text-sm">
+          Max 20 images | Max 500 KB per image
+        </p>
+      </div>
+      {visible && (
+        <div className="border-2 border-dashed border-blue-400 bg-gray-100 p-10 rounded-xl flex flex-col items-center">
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileChange}
+            ref={fileInputRef}
+            className="hidden"
+            id="file-upload"
+          />
+          <label htmlFor="file-upload" className="cursor-pointer">
+            <div className="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 text-blue-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M7 16V4m0 0l5 5-5 5M13 8h7m-7 4h4"
+                />
+              </svg>
+              <p className="text-gray-500 mt-2">
+                Click to upload or drag and drop images
+              </p>
+            </div>
+          </label>
         </div>
-        {visible && (
-          <div className="border-2 border-dashed border-blue-400 bg-gray-100 p-10 rounded-xl flex flex-col items-center">
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
-              ref={fileInputRef}
-              className="hidden"
-              id="file-upload"
-            />
-            <label htmlFor="file-upload" className="cursor-pointer">
-              <div className="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-16 w-16 text-blue-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M7 16V4m0 0l5 5-5 5M13 8h7m-7 4h4"
-                  />
-                </svg>
-                <p className="text-gray-500 mt-2">
-                  Click to upload or drag and drop images
-                </p>
-              </div>
-            </label>
-          </div>
-        )}
+      )}
 
-        {/* Loading spinner */}
-        {loading && (
-          <p className="text-center text-blue-500 mt-4">Loading images...</p>
-        )}
+      {/* Loading spinner */}
+      {loading && (
+        <p className="text-center text-blue-500 mt-4">Loading images...</p>
+      )}
 
-        {/* Image Table */}
-        {!loading && imagesByHotel[seltOption]?.length > 0 && (
+      {/* Image Table */}
+      {!loading && imagesByHotel[seltOption]?.length > 0 && (
+        <div className="hidden sm:block mt-10">
           <div className="mt-10">
             <div className="bg-gray-500 text-white p-4 border-t rounded-t-md font-semibold">
               Images for {hotels.find((h) => h._id === seltOption)?.name}
@@ -246,9 +255,44 @@ const AddImage = () => {
               </tbody>
             </table>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Mobile Grid View */}
+      {!loading && imagesByHotel[seltOption]?.length > 0 && (
+        <div className="mt-10">
+          <div className="bg-gray-500 text-white p-4 border-t rounded-t-md font-semibold">
+            Images for {hotels.find((h) => h._id === seltOption)?.name}
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+            {imagesByHotel[seltOption].map((img, idx) => (
+              <div
+                key={img._id}
+                className="bg-white rounded-lg shadow-md p-3 flex flex-col items-center gap-2 border border-gray-200 hover:shadow-lg transition-shadow"
+              >
+                <img
+                  src={img.url}
+                  alt="uploaded"
+                  className="w-24 h-24 rounded-md object-cover"
+                />
+                <p
+                  className="text-sm text-gray-600 truncate text-center mt-2 w-full"
+                  title={img.name || "N/A"} // Tooltip to show full name on hover
+                >
+                  {img.name || "N/A"}
+                </p>
+                <button
+                  onClick={() => removeImage(img._id)}
+                  className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded text-xs font-semibold"
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
-
 export default AddImage;

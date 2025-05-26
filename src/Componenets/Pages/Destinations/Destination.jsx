@@ -23,9 +23,12 @@ const Destination = () => {
     }
 
     try {
-      const res = await axios.post("https://billing-backend-seven.vercel.app/adds", {
-        name: name.trim(),
-      });
+      const res = await axios.post(
+        "https://billing-backend-seven.vercel.app/adds",
+        {
+          name: name.trim(),
+        }
+      );
 
       if (res.status === 201) {
         toast.success("Destination added successfully!");
@@ -43,7 +46,9 @@ const Destination = () => {
   // Fetch Destination from backend
   const fetchDestination = async () => {
     try {
-      const res = await axios.get("https://billing-backend-seven.vercel.app/destinations");
+      const res = await axios.get(
+        "https://billing-backend-seven.vercel.app/destinations"
+      );
       setDestination(res.data); // adjust if your data shape is different
     } catch (err) {
       toast.error("Failed to fetch destination");
@@ -116,6 +121,7 @@ const Destination = () => {
       {/* Hotel List Table */}
       <div className="mt-12  mx-auto">
         <div className="overflow-hidden shadow-lg rounded-lg">
+         <div className="hidden sm:block">
           <table className="w-full table-auto">
             <thead>
               <tr className="bg-gray-300 text-black uppercase text-sm">
@@ -155,6 +161,39 @@ const Destination = () => {
               )}
             </tbody>
           </table>
+          </div>
+          {/* Mobile Card View */}
+          <div className="sm:hidden grid grid-cols-1 gap-6 mt-6">
+            {destinations.length > 0 ? (
+              destinations.map((destination, index) => (
+                <div
+                  key={index}
+                  className="bg-gradient-to-br from-indigo-50 to-white rounded-xl shadow-lg p-6 flex flex-col gap-4 border border-indigo-200 hover:shadow-xl transition-shadow duration-300"
+                >
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-bold text-indigo-700 truncate">
+                      {destination.name}
+                    </h3>
+                    <span className="text-sm font-medium text-black">
+                      {index + 1}
+                    </span>
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => deleteDestination(destination._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white py-2 px-6 rounded-lg font-semibold shadow-md transition-all"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-500 mt-4">
+                No Destination added yet.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>

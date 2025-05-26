@@ -204,28 +204,23 @@ const Images = () => {
             </div>
           </div>
           {/* Mobile Images Card View */}
-          <div className="sm:hidden grid grid-cols-1 xs:grid-cols-2 gap-4 mt-10">
+          <div className="sm:hidden grid grid-cols-2 gap-4 mt-10">
             {images.map((img, idx) => (
               <div
                 key={img._id}
-                className="bg-white rounded-2xl shadow-lg p-4 flex flex-col items-center gap-3 border border-indigo-100"
+                className="bg-white rounded-lg shadow-md p-3 flex flex-col items-center gap-2 border border-gray-200 hover:shadow-lg transition-shadow"
               >
-                <div className="w-full flex justify-between items-center mb-2">
-                  <span className="font-semibold text-indigo-700 text-base truncate max-w-[70%]">
-                    {img.name || "N/A"}
-                  </span>
-                  <span className="text-xs text-gray-400">#{idx + 1}</span>
-                </div>
-                <div className="w-full flex justify-center">
-                  <img
-                    src={img.url}
-                    alt={img.name}
-                    className="w-28 h-28 rounded-xl object-cover border-2 border-indigo-200 shadow"
-                  />
-                </div>
+                <img
+                  src={img.url}
+                  alt={img.name}
+                  className="w-24 h-24 rounded-md object-cover border-2 border-indigo-200 shadow"
+                />
+                <p className="text-sm text-gray-600 truncate text-center mt-2">
+                  {img.name || "N/A"}
+                </p>
                 <button
                   onClick={() => removeImage(img._id)}
-                  className="mt-3 w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white py-2 rounded-lg font-semibold shadow transition"
+                  className="mt-2 w-full bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded text-xs font-semibold shadow transition"
                 >
                   Delete
                 </button>

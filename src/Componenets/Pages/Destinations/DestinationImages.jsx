@@ -21,7 +21,9 @@ const DestinationImages = () => {
   }, [seltOption]);
   const fetchDestination = async () => {
     try {
-      const res = await fetch("https://billing-backend-seven.vercel.app/destinations");
+      const res = await fetch(
+        "https://billing-backend-seven.vercel.app/destinations"
+      );
       const data = await res.json(); // <-- parse JSON here
       setDestinations(data);
     } catch (err) {
@@ -49,7 +51,7 @@ const DestinationImages = () => {
 
   const handleSelectChange = (e) => {
     setSelctOption(e.target.value);
-    setVisible(false); // reset visibility if hotel changes
+    setVisible(false); // reset visibility if dest changes
   };
 
   const handelClick = () => {
@@ -109,7 +111,9 @@ const DestinationImages = () => {
     if (!confirm) return;
 
     try {
-      await axios.delete(`https://billing-backend-seven.vercel.app/dest/del/${id}`);
+      await axios.delete(
+        `https://billing-backend-seven.vercel.app/dest/del/${id}`
+      );
       toast.success("🗑️ Image deleted successfully.");
       fetchImages(); // refresh list
     } catch (error) {
@@ -118,13 +122,14 @@ const DestinationImages = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-100 rounded-lg shadow-md ">
+<div className="mx-auto p-6 bg-gray-100 rounded-lg shadow-md">
       <button
         onClick={() => navigate(-1)}
         className="mb-4 px-4 py-2 bg-gray-300 text-black rounded-lg hover:bg-gray-400"
       >
         Back
       </button>
+
       <div>
         <div className="text-black font-bold text-xl mb-4">Image Uploader</div>
         <div className="flex flex-col gap-4">
@@ -134,7 +139,7 @@ const DestinationImages = () => {
               value={seltOption}
               className="border col-span-1 border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Select Place</option>
+              <option value="">Select Destination</option>
               {destinations?.map((destination) => (
                 <option key={destination._id} value={destination._id}>
                   {destination.name}
@@ -147,7 +152,7 @@ const DestinationImages = () => {
               onClick={handelClick}
               className={`w-full rounded-lg text-white py-2 ${
                 seltOption
-                  ? "bg-blue-600 hover:bg-blue-700"
+                  ? "bg-indigo-600 hover:bg-indigo-700"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
@@ -156,135 +161,135 @@ const DestinationImages = () => {
           </div>
         </div>
       </div>
+
+      <div className="mx-auto p-6"></div>
+      <Toaster position="top-center" reverseOrder={false} />
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-indigo-600">
+          Bulk Image Upload
+        </h2>
+        <p className="mt-2 text-gray-500 text-sm">
+          Max 20 images | Max 500 KB per image
+        </p>
+      </div>
       {visible && (
-        <div className="overflow-auto mx-auto p-6">
-          <Toaster position="top-center" reverseOrder={false} />
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-indigo-600">
-              Bulk Image Upload
-            </h2>
-            <p className="mt-2 text-gray-500 text-sm">
-              Max 20 images | Max 500 KB per image
-            </p>
+        <div className="border-2 border-dashed border-blue-400 bg-gray-100 p-10 rounded-xl flex flex-col items-center">
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileChange}
+            ref={fileInputRef}
+            className="hidden"
+            id="file-upload"
+          />
+          <label htmlFor="file-upload" className="cursor-pointer">
+            <div className="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 text-blue-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M7 16V4m0 0l5 5-5 5M13 8h7m-7 4h4"
+                />
+              </svg>
+              <p className="text-gray-500 mt-2">
+                Click to upload or drag and drop images
+              </p>
+            </div>
+          </label>
+        </div>
+      )}
+
+      {/* Loading spinner */}
+      {loading && (
+        <p className="text-center text-blue-500 mt-4">Loading images...</p>
+      )}
+
+      {/* Image Table */}
+      {!loading && imageBydest[seltOption]?.length > 0 && (
+        <div className="hidden sm:block mt-10">
+        <div className="mt-10">
+          <div className="bg-gray-500 text-white p-4 border-t rounded-t-md font-semibold">
+            Images for {destinations.find((dest) => dest._id === seltOption)?.name}
           </div>
-          <div className="border-2 border-dashed border-blue-400 bg-gray-100 p-10 rounded-xl flex flex-col items-center">
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
-              ref={fileInputRef}
-              className="hidden"
-              id="file-upload"
-            />
-            <label htmlFor="file-upload" className="cursor-pointer">
-              <div className="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-16 w-16 text-blue-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+          <table className="min-w-full bg-white shadow-md overflow-hidden">
+            <thead>
+              <tr className="bg-gray-300 text-black uppercase text-sm">
+                <th className="py-3 px-6">Sr. No</th>
+                <th className="py-3 px-6">Image URL</th>
+                <th className="py-3 px-6">Preview</th>
+                <th className="py-3 px-6">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {imageBydest[seltOption].map((img, idx) => (
+                <tr
+                  key={img._id}
+                  className="border-t hover:bg-gray-50 text-center text-gray-600"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M7 16V4m0 0l5 5-5 5M13 8h7m-7 4h4"
-                  />
-                </svg>
-                <p className="text-gray-500 mt-2">
-                  Click to upload or drag and drop images
-                </p>
-              </div>
-            </label>
-          </div>
-          {/* Loading spinner */}
-          {loading && (
-            <p className="text-center text-blue-500 mt-4">Loading images...</p>
-          )}
-          {!loading && imageBydest[seltOption]?.length > 0 && (
-            <div className="mt-10">
-              <div className="bg-gray-500 text-white p-4 border-t rounded-t-md font-semibold">
-                Images for{" "}
-                {destinations.find((dest) => dest._id === seltOption)?.name}
-              </div>
-
-              {/* Table layout for md and up */}
-              <div className="hidden md:block">
-                <table className="min-w-full bg-white shadow-md overflow-hidden">
-                  <thead>
-                    <tr className="bg-gray-300 text-black uppercase text-sm">
-                      <th className="py-3 px-6">Sr. No</th>
-                      <th className="py-3 px-6">Image Name</th>
-                      <th className="py-3 px-6">Preview</th>
-                      <th className="py-3 px-6">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {imageBydest[seltOption].map((img, idx) => (
-                      <tr
-                        key={img._id}
-                        className="border-t hover:bg-gray-50 text-center text-gray-600"
-                      >
-                        <td className="py-3 px-6">{idx + 1}</td>
-                        <td className="py-3 px-6 truncate">
-                          {img.name || "N/A"}
-                        </td>
-                        <td className="py-3 px-6 flex justify-center">
-                          <img
-                            src={img.url}
-                            alt="Uploaded"
-                            className="w-12 h-12 rounded-full object-cover"
-                          />
-                        </td>
-                        <td className="py-3 px-6">
-                          <button
-                            onClick={() => removeImage(img._id)}
-                            className="bg-red-500 hover:bg-red-700 text-white py-1 px-4 rounded transition-all"
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Card layout for small screens */}
-              <div className="block md:hidden space-y-4 mt-4">
-                {imageBydest[seltOption].map((img, idx) => (
-                  <div
-                    key={img._id}
-                    className="bg-white shadow rounded p-4 flex items-center justify-between"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <img
-                        src={img.url}
-                        alt="Uploaded"
-                        className="w-16 h-16 rounded object-cover"
-                      />
-                      <div>
-                        <p className="text-gray-800 font-semibold text-sm">
-                          {idx + 1}. {img.name || "N/A"}
-                        </p>
-                      </div>
-                    </div>
+                  <td className="py-3 px-6">{idx + 1}</td>
+                  <td className="py-3 px-6 truncate">{img.name || "N/A"}</td>
+                  <td className="py-3 px-6 flex justify-center">
+                    <img
+                      src={img.url}
+                      alt="uploaded"
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                  </td>
+                  <td className="py-3 px-6">
                     <button
                       onClick={() => removeImage(img._id)}
-                      className="bg-red-500 hover:bg-red-700 text-white text-sm px-3 py-1 rounded"
+                      className="bg-red-500 hover:bg-red-700 text-white py-1 px-4 rounded"
                     >
                       Delete
                     </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         </div>
       )}
-      <Toaster position="top-center" reverseOrder={false} />
+
+      {/* Mobile Grid View */}
+      {!loading && imageBydest[seltOption]?.length > 0 && (
+        <div className="mt-10">
+          <div className="bg-gray-500 text-white p-4 border-t rounded-t-md font-semibold">
+            Images for {destinations.find((dest) => dest._id === seltOption)?.name}
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+            {imageBydest[seltOption].map((img, idx) => (
+              <div
+                key={img._id}
+                className="bg-white rounded-lg shadow-md p-3 flex flex-col items-center gap-2 border border-gray-200 hover:shadow-lg transition-shadow"
+              >
+                <img
+                  src={img.url}
+                  alt="uploaded"
+                  className="w-24 h-24 rounded-md object-cover"
+                />
+                <p className="text-sm text-gray-600 truncate">
+                  {img.name || "N/A"}
+                </p>
+                <button
+                  onClick={() => removeImage(img._id)}
+                  className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded text-xs font-semibold"
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
