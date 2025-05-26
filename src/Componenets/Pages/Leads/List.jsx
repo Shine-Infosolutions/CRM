@@ -7,13 +7,61 @@ const List = () => {
   const navigate = useNavigate();
   const [leads, setLeads] = useState([]);
 
-  const moveLeadDown = (index) => {
+  const moveLeadDown = async (index) => {
     if (index < leads.length - 1) {
       const updatedLeads = [...leads];
       const temp = updatedLeads[index];
       updatedLeads[index] = updatedLeads[index + 1];
       updatedLeads[index + 1] = temp;
       setLeads(updatedLeads);
+
+      try {
+        const leadA = updatedLeads[index];
+        const leadB = updatedLeads[index + 1];
+
+        await axios.put(
+          "https://billing-backend-seven.vercel.app/lead/update-position",
+          {
+            leads: [
+              { id: leadA._id, position: index },
+              { id: leadB._id, position: index + 1 },
+            ],
+          }
+        );
+
+        toast.success("Lead reordered successfully");
+      } catch (error) {
+        toast.error("Failed to update order");
+      }
+    }
+  };
+
+  const moveLeadUp = async (index) => {
+    if (index > 0) {
+      const updatedLeads = [...leads];
+      const temp = updatedLeads[index];
+      updatedLeads[index] = updatedLeads[index - 1];
+      updatedLeads[index - 1] = temp;
+      setLeads(updatedLeads);
+
+      try {
+        const leadA = updatedLeads[index];
+        const leadB = updatedLeads[index - 1];
+
+        await axios.put(
+          "https://billing-backend-seven.vercel.app/lead/update-position",
+          {
+            leads: [
+              { id: leadA._id, position: index },
+              { id: leadB._id, position: index - 1 },
+            ],
+          }
+        );
+
+        toast.success("Lead reordered successfully");
+      } catch (error) {
+        toast.error("Failed to update order");
+      }
     }
   };
 
@@ -31,11 +79,10 @@ const List = () => {
       toast.error("Failed to fetch leads");
     }
   };
-  console.log(leads);
+
   return (
     <div className="p-6">
       <Toaster />
-      {/* Top bar */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800 ">Current Leads</h1>
         <Link to="/LeadsForm">
@@ -45,7 +92,6 @@ const List = () => {
         </Link>
       </div>
 
-      {/* Desktop Table */}
       <div className="hidden sm:block overflow-x-auto bg-white rounded-2xl shadow-xl">
         <table className="min-w-full table-auto text-sm text-left">
           <thead className="bg-gray-100 text-gray-600 font-semibold">
@@ -57,12 +103,13 @@ const List = () => {
               <th className="px-6 py-4">Enquiry</th>
               <th className="px-6 py-4">Follow-Up</th>
               <th className="px-6 py-4">Status</th>
+              <th className="px-6 py-4">Actions</th>
             </tr>
           </thead>
           <tbody className="text-gray-700">
             {leads.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center py-8 text-gray-500">
+                <td colSpan="8" className="text-center py-8 text-gray-500">
                   No leads available.
                 </td>
               </tr>
@@ -72,7 +119,7 @@ const List = () => {
                   key={index}
                   className="hover:bg-gray-50 border-t border-gray-200 transition-all duration-200"
                 >
-                  <td className="px-6 py-4 text-black">{lead.srNo}</td>
+                  <td className="px-6 py-4 text-black">{index + 1}</td>
                   <td className="px-6 py-4 flex items-center gap-3">
                     <img
                       src={`https://i.pravatar.cc/40?u=${
@@ -94,9 +141,18 @@ const List = () => {
                       ? new Date(lead.followUpDate).toLocaleDateString()
                       : "—"}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4">{lead.status}</td>
+                  <td className="px-6 py-4 flex gap-2">
                     <button
-                      className="ml-2 px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs font-semibold"
+                      className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs font-semibold"
+                      onClick={() => moveLeadUp(index)}
+                      disabled={index === 0}
+                      title="Move Up"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs font-semibold"
                       onClick={() => moveLeadDown(index)}
                       disabled={index === leads.length - 1}
                       title="Move Down"
@@ -109,69 +165,6 @@ const List = () => {
             )}
           </tbody>
         </table>
-      </div>
-
-      {/* Mobile Card View */}
-      <div className="sm:hidden grid grid-cols-1 xs:grid-cols-2 gap-4">
-        {leads.length === 0 ? (
-          <p className="text-center text-gray-500 mt-10">No leads available.</p>
-        ) : (
-          leads.map((lead, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-2xl shadow-lg border-l-4 border-purple-600 p-4 flex flex-col gap-2 min-w-0 transition-transform hover:scale-[1.02]"
-            >
-              <div className="flex items-center gap-3 mb-2 min-w-0">
-                <img
-                  src={`https://i.pravatar.cc/40?u=${
-                    lead.email || lead.name || index
-                  }`}
-                  alt="Avatar"
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div className="min-w-0">
-                  <div className="font-bold text-lg text-purple-700 truncate">
-                    {lead.name}
-                  </div>
-                  <div className="text-gray-500 text-sm break-all truncate">
-                    {lead.email}
-                  </div>
-                </div>
-              </div>
-              <div className="text-gray-700 text-sm mb-1 break-all">
-                <span className="font-semibold">Phone:</span> {lead.phone}
-              </div>
-              <div className="text-gray-700 text-sm mb-1 break-all">
-                <span className="font-semibold">Enquiry:</span> {lead.enquiry}
-              </div>
-              <div className="text-gray-700 text-sm mb-1 break-all">
-                <span className="font-semibold">Follow-Up:</span>{" "}
-                {lead.followUpDate
-                  ? new Date(lead.followUpDate).toLocaleDateString()
-                  : "—"}
-              </div>
-              <div className="flex items-center gap-2 mt-1">
-                <span
-                  className={`text-xs px-3 py-1 rounded-full font-semibold shadow ${
-                    lead.status === "true"
-                      ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
-                      : "bg-gray-200 text-gray-700"
-                  }`}
-                >
-                  {lead.status === "true" ? "In Progress" : "Not Interested"}
-                </span>
-                <button
-                  className="ml-2 px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs font-semibold"
-                  onClick={() => moveLeadDown(index)}
-                  disabled={index === leads.length - 1}
-                  title="Move Down"
-                >
-                  ↓
-                </button>
-              </div>
-            </div>
-          ))
-        )}
       </div>
     </div>
   );
