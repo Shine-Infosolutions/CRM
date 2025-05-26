@@ -115,7 +115,7 @@ const Sidebar = () => {
         <SidebarItem
           title="Iternary"
           icon={<UserCircleIcon className="w-5 h-5" />}
-          to="/IternaryList"
+          to="/IternaryTable"
           selected={selected}
           setSelected={handleItemClick}
           collapsed={collapsed}

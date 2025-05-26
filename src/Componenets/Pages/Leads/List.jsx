@@ -6,8 +6,8 @@ import { toast, Toaster } from "react-hot-toast";
 const List = () => {
   const navigate = useNavigate();
   const [leads, setLeads] = useState([]);
-  const [searchInput, setSearchInput] = useState(""); // Input field value
-  const [searchTerm, setSearchTerm] = useState(""); // Actual filter trigger
+  const [searchInput, setSearchInput] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [filteredLeads, setFilteredLeads] = useState([]);
 
   useEffect(() => {
@@ -69,9 +69,7 @@ const List = () => {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                setSearchTerm(searchInput);
-              }
+              if (e.key === "Enter") setSearchTerm(searchInput);
             }}
             className="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
           />
@@ -121,7 +119,7 @@ const List = () => {
                         lead.email || lead.name || index
                       }`}
                       alt="Avatar"
-                      className="w-10 h-10 rounded-full"
+                      className="w-10 h-10 rounded-full object-cover"
                     />
                     <div className="font-medium">{lead.name}</div>
                   </td>
@@ -135,9 +133,9 @@ const List = () => {
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`text-xs px-3 py-1 rounded-full font-semibold ${
+                      className={`text-xs px-3 py-1 rounded-full font-semibold shadow ${
                         lead.status === "true"
-                          ? "bg-purple-700 text-white"
+                          ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
                           : "bg-gray-200 text-gray-700"
                       }`}
                     >
@@ -161,9 +159,9 @@ const List = () => {
           filteredLeads.map((lead, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl shadow-lg border-l-4 border-purple-600 p-4 flex flex-col gap-2 min-w-0 transition-transform hover:scale-[1.02]"
+              className="bg-white rounded-2xl shadow-lg border-l-4 border-purple-600 p-4 flex flex-col gap-2 transition-transform hover:scale-[1.02]"
             >
-              <div className="flex items-center gap-3 mb-2 min-w-0">
+              <div className="flex items-center gap-3 mb-2">
                 <img
                   src={`https://i.pravatar.cc/40?u=${
                     lead.email || lead.name || index
@@ -171,28 +169,28 @@ const List = () => {
                   alt="Avatar"
                   className="w-12 h-12 rounded-full object-cover"
                 />
-                <div className="min-w-0">
-                  <div className="font-bold text-lg text-purple-700 truncate">
+                <div>
+                  <div className="text-lg font-bold text-purple-700 truncate">
                     {lead.name}
                   </div>
-                  <div className="text-gray-500 text-sm break-all truncate">
+                  <div className="text-gray-500 text-sm truncate">
                     {lead.email}
                   </div>
                 </div>
               </div>
-              <div className="text-gray-700 text-sm mb-1 break-all">
+              <div className="text-gray-700 text-sm">
                 <span className="font-semibold">Phone:</span> {lead.phone}
               </div>
-              <div className="text-gray-700 text-sm mb-1 break-all">
+              <div className="text-gray-700 text-sm">
                 <span className="font-semibold">Enquiry:</span> {lead.enquiry}
               </div>
-              <div className="text-gray-700 text-sm mb-1 break-all">
+              <div className="text-gray-700 text-sm">
                 <span className="font-semibold">Follow-Up:</span>{" "}
                 {lead.followUpDate
                   ? new Date(lead.followUpDate).toLocaleDateString()
                   : "—"}
               </div>
-              <div className="flex items-center gap-2 mt-1">
+              <div className="mt-2">
                 <span
                   className={`text-xs px-3 py-1 rounded-full font-semibold shadow ${
                     lead.status === "true"

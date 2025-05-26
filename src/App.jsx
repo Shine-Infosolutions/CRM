@@ -23,6 +23,7 @@ import InvoiceNewForm from "./Componenets/Pages/Invoice/InvoiceNewForm";
 import InvoiceNewPrint from "./Componenets/Pages/Invoice/InvoiceNewPrint";
 import IternaryList from "./Componenets/Pages/Iternary/IternaryList";
 import IternaryField from "./Componenets/Pages/Iternary/IternaryField";
+import IternaryTable from "./Componenets/Pages/Iternary/IternaryTable";
 
 function App() {
   const navigate = useNavigate();
@@ -75,6 +76,7 @@ function App() {
               <Route path="IternaryList" element={<IternaryList />} />
               <Route path="IternaryField/:id" element={<IternaryField />} />
               <Route path="IternaryField/" element={<IternaryField />} />
+              <Route path="IternaryTable" element={<IternaryTable/>} />
             </Routes>
           </div>
         </div>
