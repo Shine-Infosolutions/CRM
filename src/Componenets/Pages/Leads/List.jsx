@@ -159,16 +159,16 @@ const List = () => {
       </div>
 
       {/* Mobile Card View */}
-      <div className="sm:hidden grid grid-cols-1 xs:grid-cols-2 gap-4">
+      <div className="sm:hidden grid grid-cols-1 gap-4 mt-4">
         {filteredLeads.length === 0 ? (
           <p className="text-center text-gray-500 mt-10">No leads available.</p>
         ) : (
           filteredLeads.map((lead, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl shadow-lg border-l-4 border-purple-600 p-4 flex flex-col gap-2 transition-transform hover:scale-[1.02]"
+              className="bg-white rounded-xl shadow-md p-5 border-l-4 border-purple-500 transition-transform hover:scale-[1.02]"
             >
-              <div className="flex items-center gap-3 mb-2">
+              <div className="text-xl font-bold text-purple-700 mb-2">
                 <img
                   src={`https://i.pravatar.cc/40?u=${
                     lead.email || lead.name || index
