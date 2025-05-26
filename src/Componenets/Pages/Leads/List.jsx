@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
+import { FaPlus, FaSearch } from "react-icons/fa";
 
 const List = () => {
   const navigate = useNavigate();
@@ -58,29 +59,35 @@ const List = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-gradient-to-b from-purple-50 to-white min-h-screen">
       <Toaster />
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h1 className="text-2xl font-bold text-gray-800">Current Leads</h1>
-        <div className="flex items-center gap-4 w-full sm:w-auto">
-          <input
-            type="text"
-            placeholder="Search by Name, Phone, Email, Enquiry or Follow-Up Date"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") setSearchTerm(searchInput);
-            }}
-            className="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
-          />
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+        <h1 className="text-3xl font-extrabold text-purple-700">
+          Current Leads
+        </h1>
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <div className="relative w-full sm:w-64">
+            <input
+              type="text"
+              placeholder="Search by Name, Phone, Email, Enquiry or Follow-Up Date"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") setSearchTerm(searchInput);
+              }}
+              className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <FaSearch className="absolute left-3 top-3 text-gray-400" />
+          </div>
           <button
             onClick={() => setSearchTerm(searchInput)}
-            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
+            className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
           >
             Search
           </button>
           <Link to="/LeadsForm">
-            <button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-5 rounded-lg shadow-md transition-all duration-200">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-medium py-2 px-5 rounded-lg shadow-lg transition duration-200">
+              <FaPlus className="text-sm" />
               Add New
             </button>
           </Link>
@@ -88,9 +95,9 @@ const List = () => {
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden sm:block overflow-x-auto bg-white rounded-2xl shadow-xl">
-        <table className="min-w-full table-auto text-sm text-left">
-          <thead className="bg-gray-100 text-gray-600 font-semibold">
+      <div className="hidden sm:block overflow-x-auto bg-white rounded-xl shadow-lg border border-gray-200">
+        <table className="min-w-full text-sm text-left">
+          <thead className="bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800 font-semibold">
             <tr>
               <th className="px-6 py-4">Name</th>
               <th className="px-6 py-4">Phone</th>
