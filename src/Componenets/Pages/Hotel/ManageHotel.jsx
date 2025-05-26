@@ -19,9 +19,12 @@ const ManageHotel = () => {
     }
 
     try {
-      const res = await axios.post("https://billing-backend-seven.vercel.app/add", {
-        name: name.trim(),
-      });
+      const res = await axios.post(
+        "https://billing-backend-seven.vercel.app/add",
+        {
+          name: name.trim(),
+        }
+      );
 
       if (res.status === 201) {
         toast.success("Hotel added successfully!");
@@ -36,33 +39,35 @@ const ManageHotel = () => {
       }
     }
   };
-    // Fetch hotels from backend
-    const fetchHotels = async () => {
-      try {
-        const res = await axios.get("https://billing-backend-seven.vercel.app/hotels");
-        setHotels(res.data); // adjust if your data shape is different
-      } catch (err) {
-        toast.error("Failed to fetch hotels");
-      }
-    };
-    const deleteHotel = async (id) => {
-      try {
-        const res = await axios.delete(
-          `https://billing-backend-seven.vercel.app/hotels/${id}`
-        );
-        if (res.status === 200) {
-          toast.success("Hotel deleted successfully!");
-          fetchHotels(); // refresh the list
-        }
-      } catch (error) {
-        toast.error("Failed to delete hotel");
-      }
+  // Fetch hotels from backend
+  const fetchHotels = async () => {
+    try {
+      const res = await axios.get(
+        "https://billing-backend-seven.vercel.app/hotels"
+      );
+      setHotels(res.data); // adjust if your data shape is different
+    } catch (err) {
+      toast.error("Failed to fetch hotels");
     }
+  };
+  const deleteHotel = async (id) => {
+    try {
+      const res = await axios.delete(
+        `https://billing-backend-seven.vercel.app/hotels/${id}`
+      );
+      if (res.status === 200) {
+        toast.success("Hotel deleted successfully!");
+        fetchHotels(); // refresh the list
+      }
+    } catch (error) {
+      toast.error("Failed to delete hotel");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br p-6">
       <Toaster />
-    
+
       {/* Header & Add Image Button */}
       <div className="flex flex-col md:flex-row items-center justify-between mb-10 max-w-6xl mx-auto">
         <div className="text-center md:text-left">
@@ -110,12 +115,13 @@ const ManageHotel = () => {
         </form>
       </div>
 
-      {/* Hotel List Table */}
-      <div className="mt-12  mx-auto">
-        <div className="overflow-hidden shadow-lg rounded-lg">
+      {/* Hotel List Section */}
+      <div className="mt-12 mx-auto max-w-4xl px-4">
+        {/* For medium and larger screens: table view */}
+        <div className="hidden md:block overflow-hidden shadow-lg rounded-lg">
           <table className="w-full table-auto">
-          <thead>
-          <tr className="bg-gray-300 text-blck uppercase text-sm">
+            <thead>
+              <tr className="bg-gray-300 text-black uppercase text-sm">
                 <th className="px-6 py-3 text-left">Sr. No.</th>
                 <th className="px-6 py-3 text-left">Hotel Name</th>
                 <th className="px-6 py-3 text-left">Action</th>
@@ -128,9 +134,9 @@ const ManageHotel = () => {
                     key={index}
                     className="hover:bg-blue-50 transition duration-200"
                   >
-                    <td className="px-6 py-4 ">{index + 1}</td>
-                    <td className="px-6 py-4 ">{hotel.name}</td>
-                    <td className="py-3 px-6 ">
+                    <td className="px-6 py-4">{index + 1}</td>
+                    <td className="px-6 py-4">{hotel.name}</td>
+                    <td className="py-3 px-6">
                       <button
                         onClick={() => deleteHotel(hotel._id)}
                         className="bg-red-500 hover:bg-red-700 text-white py-1 px-4 rounded transition-all"
@@ -143,7 +149,7 @@ const ManageHotel = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan="2"
+                    colSpan="3"
                     className="px-6 py-6 text-center text-gray-500"
                   >
                     No hotels added yet.
@@ -152,6 +158,33 @@ const ManageHotel = () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* For small screens: card view */}
+        <div className="md:hidden space-y-4">
+          {hotels.length > 0 ? (
+            hotels.map((hotel, index) => (
+              <div
+                key={index}
+                className="bg-white shadow-md rounded-lg p-4 flex justify-between items-center"
+              >
+                <div>
+                  <p className="text-gray-600 text-sm">Hotel {index + 1}</p>
+                  <p className="text-lg font-semibold text-indigo-700">
+                    {hotel.name}
+                  </p>
+                </div>
+                <button
+                  onClick={() => deleteHotel(hotel._id)}
+                  className="bg-red-500 hover:bg-red-700 text-white py-1 px-3 rounded text-sm"
+                >
+                  Delete
+                </button>
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-gray-500">No hotels added yet.</p>
+          )}
         </div>
       </div>
     </div>
