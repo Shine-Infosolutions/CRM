@@ -174,7 +174,7 @@ const IternaryField = () => {
             <div className="rounded-md">
               <img
                 className="rounded-lg w-full h-[150px] object-cover shadow"
-                src="/src/assets/71840.jpg"
+                src={BannerImage}
                 alt="Main"
               />
             </div>
