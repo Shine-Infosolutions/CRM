@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { FaPlus, FaSearch } from "react-icons/fa";
+import { FaPlus, FaSearch, FaTimes } from "react-icons/fa";
+import debounce from "lodash.debounce";
 
 const List = () => {
   const navigate = useNavigate();
   const [leads, setLeads] = useState([]);
   const [searchInput, setSearchInput] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
   const [filteredLeads, setFilteredLeads] = useState([]);
 
   useEffect(() => {
@@ -16,8 +16,28 @@ const List = () => {
   }, []);
 
   useEffect(() => {
-    const lowerSearch = searchTerm.toLowerCase();
+    if (searchInput.trim() === "") {
+      setFilteredLeads(leads);
+    } else {
+      handleSearch(searchInput);
+    }
+  }, [searchInput, leads]);
 
+  const fetchLeads = async () => {
+    try {
+      const res = await axios.get(
+        "https://billing-backend-seven.vercel.app/lead/all"
+      );
+      setLeads(res.data.data || []);
+      setFilteredLeads(res.data.data || []);
+    } catch (error) {
+      toast.error("Failed to fetch leads");
+    }
+  };
+
+  // Debounced search handler
+  const handleSearch = debounce((value) => {
+    const lowerSearch = value.toLowerCase();
     const filtered = leads.filter((lead) => {
       const name = (lead.name || "").toLowerCase();
       const phone = String(lead.phone || "");
@@ -35,27 +55,16 @@ const List = () => {
         followUpDate.includes(lowerSearch)
       );
     });
-
     setFilteredLeads(filtered);
-  }, [searchTerm, leads]);
+  }, 300);
 
-  useEffect(() => {
-    if (searchInput.trim() === "") {
-      setSearchTerm("");
-      setFilteredLeads(leads);
-    }
-  }, [searchInput, leads]);
+  const handleInputChange = (e) => {
+    setSearchInput(e.target.value);
+  };
 
-  const fetchLeads = async () => {
-    try {
-      const res = await axios.get(
-        "https://billing-backend-seven.vercel.app/lead/all"
-      );
-      setLeads(res.data.data || []);
-      setFilteredLeads(res.data.data || []);
-    } catch (error) {
-      toast.error("Failed to fetch leads");
-    }
+  const clearSearch = () => {
+    setSearchInput("");
+    setFilteredLeads(leads);
   };
 
   return (
@@ -71,20 +80,17 @@ const List = () => {
               type="text"
               placeholder="Search by Name, Phone, Email, Enquiry or Follow-Up Date"
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") setSearchTerm(searchInput);
-              }}
+              onChange={handleInputChange}
               className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
-            <FaSearch className="absolute left-3 top-3 text-gray-400" />
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+            {searchInput && (
+              <FaTimes
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                onClick={clearSearch}
+              />
+            )}
           </div>
-          <button
-            onClick={() => setSearchTerm(searchInput)}
-            className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-          >
-            Search
-          </button>
           <Link to="/LeadsForm">
             <button className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-medium py-2 px-5 rounded-lg shadow-lg transition duration-200">
               <FaPlus className="text-sm" />
