@@ -2,14 +2,35 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
+import { FaPlus, FaSearch } from "react-icons/fa";
 
 const CustomerList = () => {
   const navigate = useNavigate();
   const [customer, setCustomer] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredCustomer, setFilteredCustomer] = useState([]);
 
   useEffect(() => {
     fetchCustomers();
   }, []);
+
+  useEffect(() => {
+    const lowerSearch = searchTerm.toLowerCase();
+    const filtered = customer.filter((customer) => {
+      const name = (customer.name || "").toLowerCase();
+      const phone = String(customer.phone || "");
+      const email = (customer.email || "").toLowerCase();
+      const address = (customer.Address || "").toLowerCase();
+      return (
+        name.includes(lowerSearch) ||
+        phone.includes(lowerSearch) ||
+        email.includes(lowerSearch) ||
+        address.includes(lowerSearch)
+      );
+    });
+    setFilteredCustomer(filtered);
+  }, [searchTerm, customer]);
 
   const fetchCustomers = async () => {
     try {
@@ -46,17 +67,42 @@ const CustomerList = () => {
         <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
           Current Customers
         </h1>
-        <Link to="/CustomerForm">
-          <button className="bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 px-4 sm:px-5 rounded-xl transition duration-200 shadow-md">
-            Add New
+
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <div className="relative w-full sm:w-64">
+            <input
+              type="text"
+              placeholder="Search by Name, Phone, Email, or Address"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") setSearchTerm(searchInput);
+              }}
+              className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none
+          focus:ring-2 focus:ring-purple-500"
+            />
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+          </div>
+          <button
+            onClick={() => setSearchTerm(searchInput)}
+            className="bg-purple-600 hover:bg-purple-700
+              text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+          >
+            Search
           </button>
-        </Link>
+          <Link to="/CustomerForm">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-medium py-2 px-5 rounded-lg shadow-lg transition duration-200">
+              <FaPlus className="text-sm" />
+              Add New
+            </button>
+          </Link>
+        </div>
       </div>
 
       {/* Table for desktop */}
-      <div className="hidden sm:block overflow-x-auto bg-white rounded-2xl shadow-lg">
-        <table className="w-full min-w-[600px] table-auto text-sm text-left">
-          <thead className="bg-gray-100 text-gray-600 font-semibold">
+      <div className="hidden sm:block overflow-x-auto bg-white rounded-xl shadow-lg border border-gray-200">
+        <table className="min-w-full text-sm text-left">
+          <thead className="bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800 font-semibold">
             <tr>
               <th className="px-6 py-4">Name</th>
               <th className="px-6 py-4">Phone</th>
@@ -66,25 +112,30 @@ const CustomerList = () => {
             </tr>
           </thead>
           <tbody className="text-gray-700">
-            {customer.length === 0 ? (
+            {filteredCustomer.length === 0 ? (
               <tr>
-                <td colSpan="5" className="text-center py-8 text-gray-500">
+                <td colSpan="4" className="text-center py-8 text-gray-500">
                   No details available.
                 </td>
               </tr>
             ) : (
-              customer.map((customer, index) => (
+              filteredCustomer.map((customer, index) => (
                 <tr
                   key={index}
                   className="border-t border-gray-200 hover:bg-gray-50 transition duration-150"
                 >
                   <td className="px-6 py-4 flex items-center gap-3">
                     <img
-                      src={`https://i.pravatar.cc/40?u=${customer._id}`}
+                      src={`https://i.pravatar.cc/40?u=${
+                        customer.email ||
+                        customer.phone ||
+                        customer.name ||
+                        index
+                      }`}
                       alt="Avatar"
                       className="w-10 h-10 rounded-full object-cover"
                     />
-                    <span className="font-medium">{customer.name}</span>
+                    <div className="font-medium">{customer.name}</div>
                   </td>
                   <td className="px-6 py-4">{customer.phone}</td>
                   <td className="px-6 py-4">{customer.email}</td>
@@ -111,22 +162,24 @@ const CustomerList = () => {
       </div>
 
       {/* Card view for mobile */}
-      <div className="sm:hidden grid grid-cols-2 gap-4">
-        {customer.length === 0 ? (
+      <div className="sm:hidden grid grid-cols-1 mt-4 gap-4">
+        {filteredCustomer.length === 0 ? (
           <p className="text-center text-gray-500 mt-10">
             No details available.
           </p>
         ) : (
-          customer.map((customer, index) => (
+          filteredCustomer.map((customer, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl shadow-md p-4 flex flex-col gap-2 min-w-0"
+              className="bg-white rounded-xl shadow-md p-5 border-l-4 border-purple-500 transition-transform hover:scale-[1.02]"
             >
               <div className="flex items-center gap-3 mb-2 min-w-0">
                 <img
-                  src={`https://i.pravatar.cc/40?u=${customer._id}`}
+                  src={`https://i.pravatar.cc/40?u=${
+                    customer.email || customer.phone || customer.name || index
+                  }`}
                   alt="Avatar"
-                  className="w-12 h-12 rounded-full object-cover"
+                  className="w-10 h-10 rounded-full object-cover"
                 />
                 <div className="min-w-0">
                   <div className="font-semibold text-lg text-purple-700 truncate">
