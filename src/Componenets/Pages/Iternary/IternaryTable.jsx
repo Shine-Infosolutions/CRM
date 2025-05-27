@@ -79,7 +79,7 @@ const IternaryTable = () => {
               />
             )}
           </div>
-          <Link to="/IternaryForm">
+          <Link to="/IternaryList">
             <button className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-medium py-2 px-5 rounded-lg shadow-lg transition duration-200">
               <FaPlus className="text-sm" />
               Add New
