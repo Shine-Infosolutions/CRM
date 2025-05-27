@@ -83,7 +83,7 @@ const CustomerList = () => {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3 sm:gap-0">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
+         <h1 className="text-3xl font-extrabold text-purple-700">
           Current Customers
         </h1>
 

@@ -108,9 +108,7 @@ const InvoiceNewList = () => {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3 sm:gap-0">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
-          Invoices
-        </h1>
+        <h1 className="text-3xl font-extrabold text-purple-700">Invoices</h1>
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">
             <input
@@ -151,7 +149,7 @@ const InvoiceNewList = () => {
               <th className="px-4 py-3 border-b">Actions</th>
             </tr>
           </thead>
-           <tbody className="text-gray-700">
+          <tbody className="text-gray-700">
             {filteredInvoice.length === 0 ? (
               <tr>
                 <td colSpan="5" className="text-center py-8 text-gray-500">
@@ -223,10 +221,12 @@ const InvoiceNewList = () => {
                 </div>
               </div>
               <div className="text-gray-700 text-sm mb-1 break-all">
-                <span className="font-semibold">Date:</span> {formatDate(invoice.invoiceDate)}
+                <span className="font-semibold">Date:</span>{" "}
+                {formatDate(invoice.invoiceDate)}
               </div>
               <div className="text-gray-700 text-sm mb-1 break-all">
-                <span className="font-semibold">Due Date:</span> {formatDate(invoice.dueDate)}
+                <span className="font-semibold">Due Date:</span>{" "}
+                {formatDate(invoice.dueDate)}
               </div>
               <div className="text-gray-700 text-sm mb-2 break-all">
                 <span className="font-semibold">Amount:</span>{" "}
@@ -239,21 +239,45 @@ const InvoiceNewList = () => {
                   to={`/InvoiceNewPrint/${invoice._id}`}
                   className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-base font-semibold text-white bg-green-500 shadow hover:bg-green-600 transition"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 12H9m12 0A9 9 0 11 3 12a9 9 0 0118 0z" /></svg>
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M15 12H9m12 0A9 9 0 11 3 12a9 9 0 0118 0z" />
+                  </svg>
                   View
                 </Link>
                 <button
                   onClick={() => handleEdit(invoice._id)}
                   className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-base font-semibold text-white bg-blue-500 shadow hover:bg-blue-600 transition"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a4 4 0 01-2.828 1.172H7v-2a4 4 0 011.172-2.828z" /></svg>
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a4 4 0 01-2.828 1.172H7v-2a4 4 0 011.172-2.828z" />
+                  </svg>
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(invoice._id)}
                   className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-base font-semibold text-white bg-red-500 shadow hover:bg-red-600 transition"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                   Delete
                 </button>
               </div>
