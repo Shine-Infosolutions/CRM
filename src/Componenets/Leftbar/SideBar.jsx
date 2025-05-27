@@ -42,7 +42,9 @@ const Sidebar = () => {
       <div className="flex items-center gap-2 mb-6">
         <img src="/src/assets/Logo.png" alt="Logo" className="w-10 h-10" />
         {!collapsed && (
-          <h1 className="text-md font-bold font-serif tracking-wide">Shine Infosolution</h1>
+          <h1 className="text-md font-bold font-serif tracking-wide">
+            Shine Infosolution
+          </h1>
         )}
       </div>
 
@@ -162,11 +164,19 @@ const Sidebar = () => {
       {/* Sidebar for desktop */}
       <div className="no-print hidden md:block">{sidebarContent}</div>
 
-      {/* Sidebar for mobile */}
+      {/* Sidebar for mobile with overlay */}
       {mobileOpen && (
-        <div className="no-print fixed top-0 left-0 w-64 h-full bg-white z-40 shadow-lg md:hidden">
-          {sidebarContent}
-        </div>
+        <>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden"
+            onClick={() => setMobileOpen(false)}
+          ></div>
+          {/* Sidebar */}
+          <div className="no-print fixed top-0 left-0 w-64 h-full bg-white z-40 shadow-lg md:hidden">
+            {sidebarContent}
+          </div>
+        </>
       )}
     </div>
   );
