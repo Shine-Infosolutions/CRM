@@ -76,7 +76,7 @@ const Sidebar = () => {
           setSelected={handleItemClick}
           collapsed={collapsed}
         />
-        <SidebarDropdown
+        {/* <SidebarDropdown
           title="Products"
           icon={<Squares2X2Icon className="w-5 h-5" />}
           isOpen={openProducts}
@@ -86,7 +86,7 @@ const Sidebar = () => {
           setSelected={handleItemClick}
           collapsed={collapsed}
           setMobileOpen={setMobileOpen} // ✅ pass this
-        />
+        /> */}
 
         <SidebarDropdown
           title="Gallery"

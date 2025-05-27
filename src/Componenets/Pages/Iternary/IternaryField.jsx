@@ -6,6 +6,9 @@ import { useReactToPrint } from "react-to-print";
 import { RxCrossCircled } from "react-icons/rx";
 import { Toaster, toast } from "react-hot-toast";
 import generatePDF from "react-to-pdf";
+import Logo from "/src/assets/Logo.png";
+import BannerImage from "/src/assets/71840.jpg";
+import Qr from "/src/assets/Qr.png";
 
 const IternaryField = () => {
   const { id } = useParams();
@@ -18,7 +21,6 @@ const IternaryField = () => {
   useEffect(() => {
     const fetchItinerary = async () => {
       try {
-        // Using the dynamic id param instead of hardcoded (if needed)
         const res = await axios.get(
           `https://billing-backend-seven.vercel.app/Iternary/mano/${
             id || "682c2f3ca98e563ebeb3ef01"
@@ -105,7 +107,9 @@ const IternaryField = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const res = await axios.get("https://billing-backend-seven.vercel.app/common/all");
+        const res = await axios.get(
+          "https://billing-backend-seven.vercel.app/common/all"
+        );
         setImages(res.data);
       } catch {
         // Optional: show toast or silently fail
@@ -149,39 +153,35 @@ const IternaryField = () => {
         <div className="flex justify-end mb-6"></div>
         <div className="bg-white rounded-lg shadow-lg p-6 md:p-10 space-y-6">
           <div className="flex justify-center">
-            <img
-              src="/src/assets/Logo.png"
-              alt="Logo"
-              className="w-40 h-28 object-contain"
-            />
+            <img src={Logo} alt="Logo" className="w-40 h-28 object-contain" />
           </div>
           <div className="w-full mb-4">
             <img
               className="rounded-lg w-full h-[290px] object-cover shadow"
-              src="src/assets/71840.jpg"
+              src={BannerImage}
               alt="Main"
             />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <div className=" rounded-md ">
+            <div className="rounded-md">
               <img
                 className="rounded-lg w-full h-[150px] object-cover shadow"
-                src="src/assets/71840.jpg"
+                src={BannerImage}
                 alt="Main"
               />
             </div>
-            <div className=" rounded-md ">
+            <div className="rounded-md">
               <img
                 className="rounded-lg w-full h-[150px] object-cover shadow"
-                src="src/assets/71840.jpg"
+                src="/src/assets/71840.jpg"
                 alt="Main"
               />
             </div>
-            <div className=" rounded-md ">
+            <div className="rounded-md">
               <img
                 className="rounded-lg w-full h-[150px] object-cover shadow"
-                src="src/assets/71840.jpg"
+                src={BannerImage}
                 alt="Main"
               />
             </div>
@@ -438,9 +438,9 @@ const IternaryField = () => {
           <div className="items-center flex flex-col mt-8">
             <div className="">
               <img
-                src="src/assets/Qr.png"
+                src={Qr}
                 alt="Payment QR"
-                className=" object-contain mb-2"
+                className="object-contain mb-2"
               />
               <div className="text-center">
                 <p className="font-semibold text-gray-700">Scan to Pay</p>
