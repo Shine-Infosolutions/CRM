@@ -1,11 +1,15 @@
 import React, { useState, useEffect, memo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, Toaster } from "react-hot-toast";
+import { FaPlus, FaSearch, FaTimes } from "react-icons/fa";
+import debounce from "lodash.debounce";
 
 const InvoiceNewList = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchInput, setSearchInput] = useState("");
+  const [filteredInvoice, setFilteredInvoice] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +29,44 @@ const InvoiceNewList = () => {
 
     fetchInvoices();
   }, []);
+
+  useEffect(() => {
+    if (searchInput.trim() === "") {
+      setFilteredInvoice(invoices);
+    } else {
+      handleSearch(searchInput);
+    }
+  }, [searchInput, invoices]);
+
+  const handleSearch = debounce((value) => {
+    const lowerSearch = value.toLowerCase();
+    const filtered = invoices.filter((invoice) => {
+      const invoiceNumber = (invoice.invoiceNumber || "").toLowerCase();
+      const customerName = (invoice.customerName || "").toLowerCase();
+      const invoiceDate = invoice.invoiceDate
+        ? new Date(invoice.invoiceDate).toISOString().split("T")[0]
+        : "";
+      const dueDate = invoice.dueDate
+        ? new Date(invoice.dueDate).toISOString().split("T")[0]
+        : "";
+      return (
+        invoiceNumber.includes(lowerSearch) ||
+        customerName.includes(lowerSearch) ||
+        invoiceDate.includes(lowerSearch) ||
+        dueDate.includes(lowerSearch)
+      );
+    });
+    setFilteredInvoice(filtered);
+  }, 300);
+
+  const handleInputChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    setFilteredInvoice(invoices);
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -61,23 +103,44 @@ const InvoiceNewList = () => {
   }
 
   return (
-    <div className="p-4 mx-auto">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800 text-center sm:text-left">
+    <div className="p-4 md:p-6">
+      <Toaster />
+
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3 sm:gap-0">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
           Invoices
-        </h2>
-        <Link
-          to="/InvoiceNewForm"
-          className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-4 py-2 rounded-md shadow text-center font-semibold transition"
-        >
-          + Create Invoice
-        </Link>
+        </h1>
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <div className="relative w-full sm:w-64">
+            <input
+              type="text"
+              placeholder="Search by Name, Phone, Email, or Address"
+              value={searchInput}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+            {searchInput && (
+              <FaTimes
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                onClick={clearSearch}
+              />
+            )}
+          </div>
+          <Link to="/InvoiceNewForm">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-medium py-2 px-5 rounded-lg shadow-lg transition duration-200">
+              <FaPlus className="text-sm" />
+              Create New Invoice
+            </button>
+          </Link>
+        </div>
       </div>
 
       {/* Desktop Table View */}
-      <div className="hidden sm:block overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300 rounded-lg overflow-hidden shadow-sm">
-          <thead className="bg-gray-100 text-gray-700 text-left">
+      <div className="hidden sm:block overflow-x-auto bg-white rounded-xl shadow-lg border border-gray-200">
+        <table className="min-w-full text-sm text-left">
+          <thead className="bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800 font-semibold">
             <tr>
               <th className="px-4 py-3 border-b">Invoice No</th>
               <th className="px-4 py-3 border-b">Customer</th>
@@ -88,15 +151,15 @@ const InvoiceNewList = () => {
               <th className="px-4 py-3 border-b">Actions</th>
             </tr>
           </thead>
-          <tbody>
-            {invoices.length === 0 ? (
+           <tbody className="text-gray-700">
+            {filteredInvoice.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center py-6 text-gray-500">
+                <td colSpan="5" className="text-center py-8 text-gray-500">
                   No invoices found.
                 </td>
               </tr>
             ) : (
-              invoices.map((invoice) => (
+              filteredInvoice.map((invoice) => (
                 <tr key={invoice._id} className="hover:bg-gray-50 text-center">
                   <td className="px-4 py-3 border-b">
                     {invoice.invoiceNumber}
@@ -122,7 +185,7 @@ const InvoiceNewList = () => {
                   <td className="px-4 py-3 border-b space-x-2">
                     <button
                       onClick={() => handleEdit(invoice._id)}
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md"
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition"
                     >
                       Edit
                     </button>
@@ -139,59 +202,58 @@ const InvoiceNewList = () => {
           </tbody>
         </table>
       </div>
-
-      <div className="sm:hidden space-y-5 mt-6">
-        {invoices.length === 0 ? (
-          <p className="text-center text-gray-500">No invoices found.</p>
+      {/* Mobile Card View */}
+      <div className="sm:hidden grid grid-cols-1 mt-4 gap-4">
+        {filteredInvoice.length === 0 ? (
+          <p className="text-center text-gray-500 mt-10">No invoices found.</p>
         ) : (
-          invoices.map((invoice) => (
+          filteredInvoice.map((invoice) => (
             <div
               key={invoice._id}
-              className="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex flex-col gap-2"
+              className="bg-white rounded-xl shadow-md p-5 border-l-4 border-purple-500 transition-transform hover:scale-[1.02]"
             >
-              <div className="mb-2">
-                <p className="mb-1 text-base font-semibold text-blue-700">
-                  Invoice No:{" "}
-                  <span className="font-normal text-gray-800">
-                    {invoice.invoiceNumber}
-                  </span>
-                </p>
-                <p className="mb-1">
-                  <span className="font-semibold">Customer:</span>{" "}
-                  {invoice.customerName}
-                </p>
-                <p className="mb-1">
-                  <span className="font-semibold">Date:</span>{" "}
-                  {formatDate(invoice.invoiceDate)}
-                </p>
-                <p className="mb-1">
-                  <span className="font-semibold">Due Date:</span>{" "}
-                  {formatDate(invoice.dueDate)}
-                </p>
-                <p className="mb-1">
-                  <span className="font-semibold">Amount:</span>{" "}
-                  <span className="text-green-700 font-bold">
-                    {invoice.amountDetails?.totalAmount ?? "N/A"}
-                  </span>
-                </p>
+              <div className="flex items-center gap-3 mb-2 min-w-0">
+                <div className="flex flex-col min-w-0">
+                  <div className="font-semibold text-lg text-blue-700 truncate">
+                    Invoice No: {invoice.invoiceNumber}
+                  </div>
+                  <div className="text-gray-500 text-sm break-all truncate">
+                    {invoice.customerName}
+                  </div>
+                </div>
               </div>
-              <div className="flex flex-col gap-2 mt-2">
+              <div className="text-gray-700 text-sm mb-1 break-all">
+                <span className="font-semibold">Date:</span> {formatDate(invoice.invoiceDate)}
+              </div>
+              <div className="text-gray-700 text-sm mb-1 break-all">
+                <span className="font-semibold">Due Date:</span> {formatDate(invoice.dueDate)}
+              </div>
+              <div className="text-gray-700 text-sm mb-2 break-all">
+                <span className="font-semibold">Amount:</span>{" "}
+                <span className="text-green-700 font-bold">
+                  {invoice.amountDetails?.totalAmount ?? "N/A"}
+                </span>
+              </div>
+              <div className="flex flex-col gap-3 mt-4">
                 <Link
                   to={`/InvoiceNewPrint/${invoice._id}`}
-                  className="bg-green-500 text-white w-full py-2 rounded-md text-center font-semibold hover:bg-green-600 transition"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-base font-semibold text-white bg-green-500 shadow hover:bg-green-600 transition"
                 >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 12H9m12 0A9 9 0 11 3 12a9 9 0 0118 0z" /></svg>
                   View
                 </Link>
                 <button
                   onClick={() => handleEdit(invoice._id)}
-                  className="bg-blue-500 text-white w-full py-2 rounded-md font-semibold hover:bg-blue-600 transition"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-base font-semibold text-white bg-blue-500 shadow hover:bg-blue-600 transition"
                 >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a4 4 0 01-2.828 1.172H7v-2a4 4 0 011.172-2.828z" /></svg>
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(invoice._id)}
-                  className="bg-red-500 text-white w-full py-2 rounded-md font-semibold hover:bg-red-600 transition"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-base font-semibold text-white bg-red-500 shadow hover:bg-red-600 transition"
                 >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
                   Delete
                 </button>
               </div>
