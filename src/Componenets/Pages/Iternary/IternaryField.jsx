@@ -147,6 +147,7 @@ const IternaryField = () => {
       </div>
       <div
         ref={targetRef}
+        
         className="min-h-screen text-gray-800 p-6 md:p-12 flex items-start"
       >
         <Toaster />
@@ -253,7 +254,7 @@ const IternaryField = () => {
           <h2 className="text-2xl font-semibold mb-2 text-gray-800">
             Basic Information
           </h2>
-          <p className="text-gray-600 mb-4 w-full md:w-[700px]">
+          <p className="text-gray-600 mb-4 w-[700px]">
             This tour offers a perfect blend of spirituality, history, and
             scenic beauty, making it an ideal journey for travelers of all
             kinds. From the revered temples of Kathmandu to the birthplace of
@@ -263,9 +264,9 @@ const IternaryField = () => {
             hassle-free and enriching travel experience.
           </p>
 
-          <div className="border rounded-lg p-3 bg-white w-full max-w-2xl mb-6 overflow-x-auto">
+          <div className="border rounded-lg p-3 bg-white max-w-2xl mb-6">
             <table
-              className="w-full text-left border-separate min-w-[320px]"
+              className="w-full text-left border-separate"
               style={{ borderSpacing: 0 }}
             >
               <tbody>
@@ -344,7 +345,7 @@ const IternaryField = () => {
               sightseeing to mentioned attractions and a local SIM card are also
               provided for convenience.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border rounded-lg p-4 md:p-6 bg-white shadow">
+            <div className="grid md:grid-cols-2 gap-6 border rounded-lg p-6 bg-white shadow">
               <div>
                 <h4 className="text-lg font-semibold text-green-700 mb-2">
                   Included
@@ -385,16 +386,16 @@ const IternaryField = () => {
           </div>
           <h3 className="text-lg font-semibold mb-1 underline">Destinations</h3>
           {destinationImages.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {destinationImages.map((destination, i) => (
                 <div key={i} className="p-3">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-3 w-[850px] gap-2 ml-[-10px]">
                     {destination.images.slice(0, 3).map((img, idx) => (
                       <img
                         key={img._id || idx}
                         src={img.url}
                         alt={destination.destName}
-                        className="h-[150px] w-full object-cover rounded mb-2"
+                        className="h-[200px] w-full object-cover rounded mb-2"
                       />
                     ))}
                     {destination.images.length === 0 && (
@@ -411,16 +412,16 @@ const IternaryField = () => {
           )}
           <h3 className="text-lg font-semibold mb-1 underline">Hotels</h3>
           {hotelsWithImages.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hotelsWithImages.map((hotel, i) => (
                 <div key={i} className="p-4">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-4 w-[800px] gap-2">
                     {hotel.images.slice(0, 8).map((img, idx) => (
                       <img
                         key={img._id || idx}
                         src={img.url}
                         alt={hotel.hotelName}
-                        className="h-[80px] w-full object-cover rounded mb-2"
+                        className="h-[100px] w-full object-cover rounded mb-2"
                       />
                     ))}
                     {hotel.images.length === 0 && (
@@ -440,7 +441,7 @@ const IternaryField = () => {
               <img
                 src={Qr}
                 alt="Payment QR"
-                className="object-contain mb-2 w-40 h-40"
+                className="object-contain mb-2"
               />
               <div className="text-center">
                 <p className="font-semibold text-gray-700">Scan to Pay</p>
@@ -455,12 +456,12 @@ const IternaryField = () => {
             </div>
           </div>
           <div>
-            <h3 className="underline text-black text-center text-[22px] md:text-[30px] font-serif font-semibold">
+            <h3 className="underline text-black text-center text-[30px] font-serif font-semibold">
               Our Guest Summary
             </h3>
             {images.length > 0 ? (
               <div
-                className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3 mt-4"
+                className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3 mt-4"
                 style={{ width: "100%" }}
               >
                 {images.map((img, idx) => (
