@@ -1,22 +1,23 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 import { FaPlus, FaSearch, FaTimes } from "react-icons/fa";
 import debounce from "lodash.debounce";
 
 const IternaryTable = () => {
+  const navigate = useNavigate();
   const [iternaries, setIternaries] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [filteredIternaries, setFilteredIternaries] = useState([]);
   const debouncedSearch = useRef(
     debounce((value, data) => {
       const lowerSearch = value.toLowerCase();
-      const filtered = data.filter((iternary) => {
-        const title = (iternary.title || "").toLowerCase();
-        const cost = String(iternary.cost || "").toLowerCase();
-        const date = iternary.date
-          ? new Date(iternary.date).toLocaleDateString().toLowerCase()
+      const filtered = data.filter((iternaries) => {
+        const title = (iternaries.title || "").toLowerCase();
+        const cost = String(iternaries.cost || "").toLowerCase();
+        const date = iternaries.date
+          ? new Date(iternaries.date).toLocaleDateString().toLowerCase()
           : "";
         return (
           title.includes(lowerSearch) ||
@@ -54,6 +55,28 @@ const IternaryTable = () => {
   };
 
   const clearSearch = () => setSearchInput("");
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this itinerary?")) {
+      try {
+        await axios.delete(
+          `https://billing-backend-seven.vercel.app/Iternary/delete/${id}`
+        );
+        toast.success("Itinerary deleted successfully!");
+        setIternaries((prev) => prev.filter((iternaries) => iternaries._id !== id));
+        setFilteredIternaries((prev) =>
+          prev.filter((iternaries) => iternaries._id !== id)
+        );
+      } catch (error) {
+        console.error("Error deleting itinerary:", error);
+        toast.error("Failed to delete itinerary.");
+      }
+    }
+  };
+
+  const handleView = (id) => {
+    // Navigate to the view page with the itinerary ID
+    window.location.href = `/IternaryField/${id}`;
+  };
 
   return (
     <div className="p-6 bg-gradient-to-b from-purple-50 to-white min-h-screen">
@@ -97,31 +120,54 @@ const IternaryTable = () => {
               <th className="px-6 py-4">Cost</th>
               <th className="px-6 py-4">Date</th>
               <th className="px-6 py-4">Advance</th>
+              <th className="px-6 py-4">Actions</th>
             </tr>
           </thead>
           <tbody className="text-gray-800">
             {filteredIternaries.length === 0 ? (
               <tr>
-                <td colSpan="4" className="text-center py-8 text-gray-500">
+                <td colSpan="5" className="text-center py-8 text-gray-500">
                   No itineraries found.
                 </td>
               </tr>
             ) : (
-              filteredIternaries.map((iternary, index) => (
+              filteredIternaries.map((iternaries, index) => (
                 <tr
                   key={index}
                   className="hover:bg-purple-50 border-t border-gray-200 transition-all"
                 >
                   <td className="px-6 py-4 font-semibold">
-                    {iternary.title || "—"}
+                    {iternaries.title || "—"}
                   </td>
-                  <td className="px-6 py-4">₹ {iternary.cost || "—"}</td>
+                  <td className="px-6 py-4">₹ {iternaries.cost || "—"}</td>
                   <td className="px-6 py-4">
-                    {iternary.date
-                      ? new Date(iternary.date).toLocaleDateString()
+                    {iternaries.date
+                      ? new Date(iternaries.date).toLocaleDateString()
                       : "—"}
                   </td>
-                  <td className="px-6 py-4">₹ {iternary.advance || "—"}</td>
+                  <td className="px-6 py-4">₹ {iternaries.advance || "—"}</td>
+                  <td className="px-6 py-4 flex gap-2">
+                    <button
+                      onClick={() => handleView(iternaries._id)}
+                      className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() =>
+                        navigate(`/IternaryList/${iternaries._id}`)
+                      }
+                      className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(iternaries._id)}
+                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))
             )}
@@ -136,38 +182,49 @@ const IternaryTable = () => {
             No itineraries available.
           </p>
         ) : (
-          filteredIternaries.map((iternary, index) => (
+          filteredIternaries.map((iternaries, index) => (
             <div
               key={index}
               className="bg-white rounded-xl shadow-md p-5 border-l-4 border-purple-500 transition-transform hover:scale-[1.02]"
             >
               <div className="text-xl font-bold text-purple-700 mb-2">
-                {iternary.title || "—"}
+                {iternaries.title || "—"}
               </div>
               <div className="text-gray-700 text-sm mb-1">
                 <span className="font-medium">Date:</span>{" "}
-                {iternary.date
-                  ? new Date(iternary.date).toLocaleDateString()
+                {iternaries.date
+                  ? new Date(iternaries.date).toLocaleDateString()
                   : "—"}
               </div>
               <div className="text-gray-700 text-sm mb-1">
                 <span className="font-medium">Cost:</span> ₹
-                {iternary.cost || "—"}
+                {iternaries.cost || "—"}
               </div>
               <div className="text-gray-700 text-sm mb-2">
                 <span className="font-medium">Advance:</span> ₹
-                {iternary.advance || "—"}
+                {iternaries.advance || "—"}
               </div>
-              <div>
-                <span
-                  className={`inline-block text-xs font-semibold px-3 py-1 rounded-full shadow ${
-                    iternary.status === "true"
-                      ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
-                      : "bg-gray-300 text-gray-700"
-                  }`}
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={() => handleView(iternaries._id)}
+                  className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                 >
-                  {iternary.status === "true" ? "Active" : "Inactive"}
-                </span>
+                  View
+                </button>
+                <button
+                 onClick={() =>
+                    navigate(`/IternaryList/${iternaries._id}`)
+                  }
+                  className="flex-1 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(iternaries._id)}
+                  className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                >
+                  Delete
+                </button>
               </div>
             </div>
           ))

@@ -61,11 +61,8 @@ function App() {
               <Route path="addimages" element={<AddImage />} />
               <Route path="destination" element={<Destination />} />
               <Route path="DestinationImages" element={<DestinationImages />} />
-              <Route path="list" element={<List/>} />
-              <Route
-                path="leadsform"
-                element={<LeadsForm/>}
-              />
+              <Route path="list" element={<List />} />
+              <Route path="leadsform" element={<LeadsForm />} />
               <Route path="CustomerList" element={<CustomerList />} />
               <Route path="CustomerForm" element={<CustomerForm />} />
               <Route path="CustomerForm/:id" element={<CustomerForm />} />
@@ -74,9 +71,10 @@ function App() {
               <Route path="InvoiceNewForm" element={<InvoiceNewForm />} />
               <Route path="InvoiceNewPrint/:id" element={<InvoiceNewPrint />} />
               <Route path="IternaryList" element={<IternaryList />} />
+              <Route path="IternaryList/:id" element={<IternaryList />} />
               <Route path="IternaryField/:id" element={<IternaryField />} />
               <Route path="IternaryField/" element={<IternaryField />} />
-              <Route path="IternaryTable" element={<IternaryTable/>} />
+              <Route path="IternaryTable" element={<IternaryTable />} />
             </Routes>
           </div>
         </div>

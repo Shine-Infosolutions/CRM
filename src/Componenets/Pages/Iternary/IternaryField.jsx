@@ -5,11 +5,11 @@ import { CheckCircle } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
 import { RxCrossCircled } from "react-icons/rx";
 import { Toaster, toast } from "react-hot-toast";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+import generatePDF from "react-to-pdf";
 import Logo from "/src/assets/Logo.png";
 import BannerImage from "/src/assets/71840.jpg";
 import Qr from "/src/assets/Qr.png";
+import { useNavigate } from "react-router-dom";
 
 const IternaryField = () => {
   const { id } = useParams();
@@ -18,25 +18,12 @@ const IternaryField = () => {
   const [destinationImages, setDestinationImages] = useState([]);
   const [images, setImages] = useState([]);
   const targetRef = useRef();
-  const hotelCache = useRef({});
-  const destinationCache = useRef({});
-
-  const convertToBase64 = async (url) => {
-    try {
-      const response = await axios.get(url, { responseType: "arraybuffer" });
-      return `data:image/jpeg;base64,${Buffer.from(response.data, "binary").toString("base64")}`;
-    } catch {
-      return url; // Fallback to original URL if conversion fails
-    }
-  };
-
-  useEffect(() => {
+  const navigate = useNavigate();
+  useEffect (() => {
     const fetchItinerary = async () => {
       try {
         const res = await axios.get(
-          `https://billing-backend-seven.vercel.app/Iternary/mano/${
-            id || "682c2f3ca98e563ebeb3ef01"
-          }`
+          `https://billing-backend-seven.vercel.app/Iternary/mano/${id}`
         );
         setItinerary(res.data.data);
       } catch (err) {
@@ -44,7 +31,6 @@ const IternaryField = () => {
         toast.error("Failed to load itinerary.");
       }
     };
-
     fetchItinerary();
   }, [id]);
 
@@ -64,20 +50,11 @@ const IternaryField = () => {
               ? hotel
               : hotel.name || hotel.label || hotelId;
 
-          if (hotelCache.current[hotelId]) {
-            return hotelCache.current[hotelId];
-          }
-
           try {
             const res = await axios.get(
               `https://billing-backend-seven.vercel.app/gals/all?hotelId=${hotelId}`
             );
-            const images = await Promise.all(
-              res.data.map((img) => convertToBase64(img.url))
-            );
-            const hotelData = { hotelName, images };
-            hotelCache.current[hotelId] = hotelData;
-            return hotelData;
+            return { hotelName, images: res.data };
           } catch {
             return { hotelName, images: [] };
           }
@@ -97,7 +74,7 @@ const IternaryField = () => {
         return;
       }
 
-      const destinations = await Promise.all(
+      const desti = await Promise.all(
         itinerary.destinations.map(async (destination) => {
           const destId =
             typeof destination === "string"
@@ -108,27 +85,18 @@ const IternaryField = () => {
               ? destination
               : destination.name || destination.label || destId;
 
-          if (destinationCache.current[destId]) {
-            return destinationCache.current[destId];
-          }
-
           try {
             const res = await axios.get(
               `https://billing-backend-seven.vercel.app/dest/alls?destId=${destId}`
             );
-            const images = await Promise.all(
-              res.data.map((img) => convertToBase64(img.url))
-            );
-            const destinationData = { destName, images };
-            destinationCache.current[destId] = destinationData;
-            return destinationData;
+            return { destName, images: res.data };
           } catch {
             return { destName, images: [] };
           }
         })
       );
 
-      setDestinationImages(destinations);
+      setDestinationImages(desti);
     };
 
     fetchDestinationImages();
@@ -147,6 +115,9 @@ const IternaryField = () => {
     };
 
     fetchImages();
+
+    const interval = setInterval(fetchImages, 2000);
+    return () => clearInterval(interval);
   }, []);
 
   const handlePrint = useReactToPrint({
@@ -154,29 +125,6 @@ const IternaryField = () => {
     documentTitle: itinerary?.title || "Itinerary",
     removeAfterPrint: true,
   });
-
-  const handleDownloadPDF = async () => {
-    if (!targetRef.current) return;
-
-    try {
-      const canvas = await html2canvas(targetRef.current, {
-        useCORS: true, // Ensures cross-origin images are rendered
-        scale: 2, // Improves image quality in the PDF
-      });
-
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save("itinerary.pdf");
-    } catch (error) {
-      console.error("Error generating PDF", error);
-      toast.error("Failed to download PDF.");
-    }
-  };
 
   if (!itinerary) {
     return (
@@ -189,7 +137,11 @@ const IternaryField = () => {
   return (
     <>
       <div>
-        <button onClick={handleDownloadPDF}>Download PDF</button>
+        <button
+          onClick={() => generatePDF(targetRef, { filename: "page.pdf" })}
+        >
+          Download PDF
+        </button>
       </div>
       <div
         ref={targetRef}
@@ -429,32 +381,6 @@ const IternaryField = () => {
               </div>
             </div>
           </div>
-          <h3 className="text-lg font-semibold mb-1 underline">Hotels</h3>
-          {hotelsWithImages.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {hotelsWithImages.map((hotel, i) => (
-                <div key={i} className="p-4">
-                  <div className="grid grid-cols-4 w-[800px] gap-2">
-                    {hotel.images.slice(0, 8).map((img, idx) => (
-                      <img
-                        key={idx}
-                        src={img} // Use the Base64-encoded image URL
-                        alt={hotel.hotelName}
-                        className="h-[100px] w-full object-cover rounded mb-2"
-                      />
-                    ))}
-                    {hotel.images.length === 0 && (
-                      <span className="text-gray-400 text-sm col-span-2">
-                        No images
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500">No hotel images available.</p>
-          )}
           <h3 className="text-lg font-semibold mb-1 underline">Destinations</h3>
           {destinationImages.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -463,8 +389,8 @@ const IternaryField = () => {
                   <div className="grid grid-cols-3 w-[850px] gap-2 ml-[-10px]">
                     {destination.images.slice(0, 3).map((img, idx) => (
                       <img
-                        key={idx}
-                        src={img} // Use the Base64-encoded image URL
+                        key={img._id || idx}
+                        src={img.url}
                         alt={destination.destName}
                         className="h-[200px] w-full object-cover rounded mb-2"
                       />
@@ -480,6 +406,32 @@ const IternaryField = () => {
             </div>
           ) : (
             <p className="text-sm text-gray-500">No images available.</p>
+          )}
+          <h3 className="text-lg font-semibold mb-1 underline">Hotels</h3>
+          {hotelsWithImages.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {hotelsWithImages.map((hotel, i) => (
+                <div key={i} className="p-4">
+                  <div className="grid grid-cols-4 w-[800px] gap-2">
+                    {hotel.images.slice(0, 8).map((img, idx) => (
+                      <img
+                        key={img._id || idx}
+                        src={img.url}
+                        alt={hotel.hotelName}
+                        className="h-[100px] w-full object-cover rounded mb-2"
+                      />
+                    ))}
+                    {hotel.images.length === 0 && (
+                      <span className="text-gray-400 text-sm col-span-2">
+                        No images
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">No hotel images available.</p>
           )}
           <div className="items-center flex flex-col mt-8">
             <div className="">
