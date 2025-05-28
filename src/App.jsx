@@ -72,8 +72,8 @@ function App() {
               <Route path="InvoiceNewPrint/:id" element={<InvoiceNewPrint />} />
               <Route path="IternaryList" element={<IternaryList />} />
               <Route path="IternaryList/:id" element={<IternaryList />} />
-              <Route path="IternaryField/:id" element={<IternaryField />} />
               <Route path="IternaryField/" element={<IternaryField />} />
+              <Route path="IternaryField/:id" element={<IternaryField />} />
               <Route path="IternaryTable" element={<IternaryTable />} />
             </Routes>
           </div>

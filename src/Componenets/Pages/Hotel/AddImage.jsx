@@ -212,7 +212,7 @@ const AddImage = () => {
       )}
 
       {/* Image Table */}
-      {!loading && imagesByHotel[seltOption]?.length > 0 && (
+      {/* {!loading && imagesByHotel[seltOption]?.length > 0 && (
         <div className="hidden sm:block mt-10">
           <div className="mt-10">
             <div className="bg-gray-500 text-white p-4 border-t rounded-t-md font-semibold">
@@ -256,7 +256,7 @@ const AddImage = () => {
             </table>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Mobile Grid View */}
       {!loading && imagesByHotel[seltOption]?.length > 0 && (

@@ -1,14 +1,71 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import { Link } from "react-router-dom";
-import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom"; // hook to navigate to another page
+import { ToastContainer, toast } from "react-toastify"; // for toast notifications
+import { MultiSelect } from "react-multi-select-component";
+import { Link } from "react-router-dom"; // for navigation links
+import axios from "axios"; // for making HTTP requests
 
 const IternaryList = ({ leads, setLeads }) => {
+  const { id } = useParams(); // Get the id from URL
   const navigate = useNavigate(); // hook to navigate to another page
-  const { id } = useParams();
   const [hotels, setHotels] = useState([]);
   const [destinations, setDestinations] = useState([]);
+
+  useEffect(() => {
+    if (id) {
+      // Fetch existing itinerary data to edit
+      axios
+        .get(`https://billing-backend-seven.vercel.app/Iternary/mano/${id}`)
+        .then((res) => {
+          const {
+            title,
+            days,
+            date,
+            pickLoc,
+            dropLoc,
+            pickTime,
+            dropTime,
+            vehicle,
+            package: packageName,
+            cost,
+            personNo,
+            hotelType,
+            advance,
+            hotelSelected,
+            destinations: dests,
+            dynamicFields,
+            costInclude,
+            costExclude,
+          } = res.data.data;
+          setFormData({
+            title: title || "",
+            days: days || "",
+            date: date || "",
+            pickLoc: pickLoc || "",
+            dropLoc: dropLoc || "",
+            pickTime: pickTime || "",
+            dropTime: dropTime || "",
+            vehicle: vehicle || "",
+            package: packageName || "",
+            cost: cost || "",
+            personNo: personNo || "",
+            hotelType: hotelType || "",
+            advance: advance || "",
+            hotelSelected: hotelSelected || [],
+            destinations: dests || [],
+            dynamicFields: dynamicFields || Array().fill({ fieldName: "" }),
+            costInclude: costInclude || [],
+            costExclude: costExclude || [],
+          });
+          setDaySchedules(dynamicFields.map((day) => day.points || []));
+          setActiveDay(1); // Reset to first day
+        })
+        .catch((err) => {
+          toast.error("Failed to load itinerary data");
+          console.error(err);
+        });
+    }
+  }, [id]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -59,6 +116,7 @@ const IternaryList = ({ leads, setLeads }) => {
   const [daySchedules, setDaySchedules] = useState(
     Array.from({ length: 4 }, () => [])
   );
+
   useEffect(() => {
     const fetchHotels = async () => {
       try {
@@ -174,47 +232,10 @@ const IternaryList = ({ leads, setLeads }) => {
   const removeCostExclude = (idx) =>
     setCostExclude((prev) => prev.filter((_, i) => i !== idx));
 
-  useEffect(() => {
-    if (id) {
-      const fetchItinerary = async () => {
-        try {
-          const res = await axios.get(
-            `https://billing-backend-seven.vercel.app/Iternary/mano/${id}`
-          );
-          const data = res.data.data;
-          setFormData({
-            title: data.title || "",
-            days: data.days || "",
-            date: data.date || "",
-            pickLoc: data.pickLoc || "",
-            dropLoc: data.dropLoc || "",
-            pickTime: data.pickTime || "",
-            dropTime: data.dropTime || "",
-            vehicle: data.vehicle || "",
-            package: data.package || "",
-            cost: data.cost || "",
-            personNo: data.personNo || "",
-            hotelType: data.hotelType || "",
-            advance: data.advance || "",
-            dynamicFields: data.dynamicFields || [],
-          });
-          setDaySchedules(
-            (data.dynamicFields || []).map((field) => field.points || [])
-          );
-          setCostInclude(data.costInclude || []);
-          setCostExclude(data.costExclude || []);
-        } catch (error) {
-          console.error("Failed to fetch itinerary for editing:", error);
-          toast.error("Failed to load itinerary for editing.");
-        }
-      };
+  // ...existing code...
 
-      fetchItinerary();
-    }
-  }, [id]);
   const handleSubmit = async (e) => {
-    if (e) e.preventDefault(); // Prevent default form submission behavior
-
+    e.preventDefault();
     const dynamicFields = daySchedules
       .map((schedule, index) => ({
         dayTitle: `Day ${index + 1}`,
@@ -224,18 +245,13 @@ const IternaryList = ({ leads, setLeads }) => {
 
     const finalData = {
       ...formData,
-      hotelSelected: Array.isArray(formData.hotelSelected)
-        ? formData.hotelSelected.map((h) => h.value)
-        : [],
-      destinations: Array.isArray(formData.destinations)
-        ? formData.destinations.map((d) => d.value)
-        : [],
+      hotelSelected: formData.hotelSelected.map((h) => h.value),
+      destinations: formData.destinations.map((d) => d.value),
       dynamicFields,
       days: parseInt(formData.days),
       costInclude,
       costExclude,
     };
-
     try {
       if (id) {
         // Update existing itinerary
@@ -245,19 +261,30 @@ const IternaryList = ({ leads, setLeads }) => {
         );
         toast.success("Itinerary updated successfully!");
       } else {
-        // Create new itinerary
+        // Add new itinerary
         await axios.post(
           "https://billing-backend-seven.vercel.app/Iternary/add",
           finalData
         );
-        toast.success("Itinerary created successfully!");
+        toast.success("Itinerary added successfully!");
       }
-      // Redirect to itinerary list or another page
-      navigate("/IternaryTable");
+      navigate("/IternaryTable"); // Redirect to itinerary list
     } catch (error) {
-      console.error("Error submitting itinerary:", error);
-      toast.error("Failed to submit itinerary. Please try again.");
+      console.error("Error saving itinerary:", error);
+      toast.error("Failed to save itinerary.");
     }
+    // try {
+    //   console.log("📦 Sending Final Data:", finalData);
+    //   const res = await axios.post(
+    //     "https://billing-backend-seven.vercel.app/Iternary/add",
+    //     finalData
+    //   );
+    //   console.log("Itinerary saved:", res.data.message);
+    //   toast.success("Itinerary saved!");
+    // } catch (err) {
+    //   console.error("Error saving itinerary:", err);
+    //   toast.error("Failed to save itinerary.");
+    // }
 
     // Reset after submit
     setFormData({
@@ -282,6 +309,7 @@ const IternaryList = ({ leads, setLeads }) => {
     setCostInclude([]);
     setCostExclude([]);
   };
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-4 px-1 flex justify-center">
@@ -308,10 +336,11 @@ const IternaryList = ({ leads, setLeads }) => {
             </Link> */}
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-blue-700 tracking-wide w-full sm:w-auto">
-            {id ? "Edit Itinerary" : "Create New Itinerary"}
+            Add New Tour
           </h2>
-          <Link to="/IternaryField" className="w-full sm:w-auto">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-4 py-2 rounded-lg shadow-lg text-base font-semibold transition">
+          <Link to={`/IternaryField/${id}`} className="w-full sm:w-auto">
+            <button 
+            className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-4 py-2 rounded-lg shadow-lg text-base font-semibold transition">
               Print Itinerary
             </button>
           </Link>
@@ -684,46 +713,39 @@ const IternaryList = ({ leads, setLeads }) => {
               </div>
             </div>
 
-            {/* Hotels and Destinations Dropdowns */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Hotels Dropdown */}
-              <div>
-                <label className="block mb-2 font-semibold">Hotels</label>
-                <select
-                  name="hotelSelected"
-                  className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={formData.hotelSelected}
-                  onChange={handleChange}
-                >
-                  <option value="" disabled>
-                    Select a hotel
-                  </option>
-                  {hotels.map((hotel) => (
-                    <option key={hotel.id} value={hotel.value}>
-                      {hotel.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <hr className="my-4 border-gray-200" />
 
-              {/* Destinations Dropdown */}
+            {/* Hotel & Destination MultiSelect */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block mb-2 font-semibold">Destinations</label>
-                <select
-                  name="destinations"
-                  className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                <label className="block font-semibold mb-2">Select Hotel</label>
+                <MultiSelect
+                  options={hotels}
+                  value={formData.hotelSelected}
+                  onChange={(selected) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      hotelSelected: selected,
+                    }));
+                  }}
+                  labelledBy="Select"
+                />
+              </div>
+              <div>
+                <label className="block font-semibold mb-2">
+                  Select Destinations
+                </label>
+                <MultiSelect
+                  options={destinations}
                   value={formData.destinations}
-                  onChange={handleChange}
-                >
-                  <option value="" disabled>
-                    Select a destination
-                  </option>
-                  {destinations.map((destination) => (
-                    <option key={destination.id} value={destination.value}>
-                      {destination.label}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(selected) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      destinations: selected,
+                    }));
+                  }}
+                  labelledBy="Select"
+                />
               </div>
             </div>
 
@@ -740,7 +762,7 @@ const IternaryList = ({ leads, setLeads }) => {
                 }
                 className="w-full sm:w-auto px-10 py-3 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-xl transition-all duration-200"
               >
-                {id ? "Update Itinerary" : "Submit Itinerary"}
+                {id ? "Update Itinerary" : "Add Itinerary"}
               </button>
             </div>
           </form>

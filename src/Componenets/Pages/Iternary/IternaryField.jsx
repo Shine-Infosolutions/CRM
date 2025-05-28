@@ -6,6 +6,8 @@ import { useReactToPrint } from "react-to-print";
 import { RxCrossCircled } from "react-icons/rx";
 import { Toaster, toast } from "react-hot-toast";
 import generatePDF from "react-to-pdf";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import Logo from "/src/assets/Logo.png";
 import BannerImage from "/src/assets/71840.jpg";
 import Qr from "/src/assets/Qr.png";
@@ -109,22 +111,80 @@ const IternaryField = () => {
           "https://billing-backend-seven.vercel.app/common/all"
         );
         setImages(res.data);
-      } catch {
-        // Optional: show toast or silently fail
+      } catch (error) {
+        console.error("Failed to fetch images:", error);
+        toast.error("Failed to load images.");
       }
     };
 
-    fetchImages();
+    // Fetch images only once
+    if (images.length === 0) {
+      fetchImages();
+    }
+  }, [images]);
 
-    const interval = setInterval(fetchImages, 2000);
-    return () => clearInterval(interval);
-  }, []);
+  // const handlePrint = useReactToPrint({
+  //   content: () => targetRef.current,
+  //   documentTitle: itinerary?.title || "Itinerary",
+  //   removeAfterPrint: true,
+  // });
 
-  const handlePrint = useReactToPrint({
-    content: () => targetRef.current,
-    documentTitle: itinerary?.title || "Itinerary",
-    removeAfterPrint: true,
-  });
+  const handleDownloadPDF = async () => {
+    const element = targetRef.current;
+
+    if (!element) {
+      toast.error("Unable to generate PDF. Please try again.");
+      return;
+    }
+
+    try {
+      // Convert all images to Base64
+      const images = element.querySelectorAll("img");
+      await Promise.all(
+        Array.from(images).map(async (img) => {
+          if (!img.src.startsWith("data:")) {
+            try {
+              console.log("Fetching image:", img.src);
+              const response = await fetch(img.src, { mode: "cors" });
+              const blob = await response.blob();
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                img.src = reader.result;
+                console.log("Image converted to Base64:", img.src);
+              };
+              reader.readAsDataURL(blob);
+              await new Promise((resolve) => (reader.onloadend = resolve));
+            } catch (error) {
+              console.error("Error converting image to Base64:", img.src, error);
+            }
+          }
+        })
+      );
+
+      // Add a small delay to ensure all images are rendered
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Generate canvas from the element
+      const canvas = await html2canvas(element, {
+        useCORS: true, // Enable cross-origin handling
+        allowTaint: false, // Prevent tainting of the canvas
+      });
+      const imgData = canvas.toDataURL("image/png");
+
+      // Create PDF
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save("itinerary.pdf");
+
+      toast.success("PDF downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error("Failed to generate PDF. Please try again.");
+    }
+  };
 
   if (!itinerary) {
     return (
