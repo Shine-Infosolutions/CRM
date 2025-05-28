@@ -213,7 +213,7 @@ const DestinationImages = () => {
       )}
 
       {/* Image Table */}
-      {!loading && imageBydest[seltOption]?.length > 0 && (
+      {/* {!loading && imageBydest[seltOption]?.length > 0 && (
         <div className="hidden sm:block mt-10">
         <div className="mt-10">
           <div className="bg-gray-500 text-white p-4 border-t rounded-t-md font-semibold">
@@ -257,7 +257,7 @@ const DestinationImages = () => {
           </table>
         </div>
         </div>
-      )}
+      )} */}
 
       {/* Mobile Grid View */}
       {!loading && imageBydest[seltOption]?.length > 0 && (
