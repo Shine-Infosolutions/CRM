@@ -1,5 +1,5 @@
 // Base URL for your backend API
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://billing-backend-seven.vercel.app';
 
 /**
  * Makes a request to the backend API
@@ -38,13 +38,13 @@ export const makeRequest = async (endpoint, options = {}) => {
 export const apiService = {
    // ----------------- AUTH -----------------
    register: (data) =>
-    makeRequest('/api/users/register', {
+    makeRequest('/user/register', {
       method: 'POST',
       body: JSON.stringify(data)
     }),
 
   login: (data) =>
-    makeRequest('/api/users/login', {
+    makeRequest('/user/login', {
       method: 'POST',
       body: JSON.stringify(data)
     }),
